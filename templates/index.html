@@ -9,10 +9,10 @@
 <body>
     <h1>{{rfidTag}}</h1>
     <button onclick="fetchUser()" >Scan Now</button><!-- TEMPORARY -->
-    <p id="data">{{student}}</p><!-- TEMPORARY -->
+    <p id="data"></p><!-- TEMPORARY -->
     
 
-   <a href="{{url_for('app_blueprint.about')}}">About us</a>
+   <a href="{{url_for('about')}}">About us</a>
 
 <script src="{{ url_for('static', filename='js/script.js')}}"></script>
 </body>

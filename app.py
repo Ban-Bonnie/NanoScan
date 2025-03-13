@@ -1,5 +1,4 @@
-from flask import Flask, g, jsonify
-from app_blueprints import app_blueprints  
+from flask import Flask, g, jsonify,render_template
 from flask_mysqldb import MySQL
 
 mysql = MySQL()
@@ -7,16 +6,8 @@ mysql = MySQL()
 class NanoScan:
     def __init__(self, name):
         self.app = Flask(name)
-        self.RFIDtag = "1H 6H 8U 1A"  # RFID TAG temporary
+        self.RFIDtag = "8U 2J 0E 1W"  # RFID TAG temporary
         self.userInstance = None
-        self.app.add_url_rule('/fetch-user', 'fetch_user', self.fetch_user_route)
-
-        @self.app.before_request
-        def before_request():
-            g.RFIDtag = self.RFIDtag
-            g.userInstance = self.userInstance
-
-    
 
         # Database Configuration
         self.app.config['MYSQL_HOST'] = "localhost"
@@ -25,26 +16,36 @@ class NanoScan:
         self.app.config['MYSQL_DB'] = "nanoscan"
         mysql.init_app(self.app) 
     
+    def setup_route(self):
+        @self.app.route("/")
+        def home():
+            return render_template("index.html", rfidTag=self.RFIDtag)
         
+        @self.app.route("/about")
+        def about():
+            return "ABOUT US"
+        
+        @self.app.route("/fetch-user")
+        def fetch_user():  # Moved this inside setup_route() as a proper route
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM students WHERE tag_no = %s", (self.RFIDtag,))
+            user = cursor.fetchone()
+            cursor.close()
 
-    def fetch_user_route(self): #TEMPORARY
-        cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM students WHERE tag_no = %s", (self.RFIDtag,))  
-        user = cursor.fetchone()
-        cursor.close()
-        return jsonify({'user': user})  # Ensure JSON response
+            if user:
+                return jsonify({
+                    'user': user  # Sending user data as JSON
+                })
+            else:
+                return jsonify({'error': 'User not found'}), 404
 
-  
-
-    def register_blueprints(self):
-        self.app.register_blueprint(app_blueprints)  
-
-    def run(self):
-        self.app.run(debug=True)
 
     
 
 
+    def run(self):
+        self.app.run(debug=True)
+
 nano_scan = NanoScan(__name__)  
-nano_scan.register_blueprints()  
+nano_scan.setup_route()
 nano_scan.run()
