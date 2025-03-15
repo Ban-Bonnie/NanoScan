@@ -1,50 +1,53 @@
-from flask import Flask, g, jsonify,render_template
+from flask import Flask, jsonify, render_template
 from flask_mysqldb import MySQL
+from RFIDreader import Reader  # Import the RFID reader class
 
 mysql = MySQL()
 
 class NanoScan:
     def __init__(self, name):
         self.app = Flask(name)
-        self.RFIDtag = "8U 2J 0E 1W"  # RFID TAG temporary
-        self.userInstance = None
+        self.userInstance = None  # Unused but keeping it
 
         # Database Configuration
         self.app.config['MYSQL_HOST'] = "localhost"
         self.app.config['MYSQL_USER'] = "root"
         self.app.config['MYSQL_PASSWORD'] = ""
         self.app.config['MYSQL_DB'] = "nanoscan"
-        mysql.init_app(self.app) 
-    
+        mysql.init_app(self.app)
+
     def setup_route(self):
         @self.app.route("/")
         def home():
-            return render_template("index.html", rfidTag=self.RFIDtag)
-        
+            return render_template("index.html")
+
         @self.app.route("/about")
         def about():
             return "ABOUT US"
-        
+
         @self.app.route("/fetch-user")
-        def fetch_user():  # Moved this inside setup_route() as a proper route
+        def fetch_user():
+            """Scans RFID and fetches user from MySQL."""
+            rfid_reader = Reader(port="COM3")  # Initialize inside request
+            rfid_reader.connect()
+            rfid_tag = rfid_reader.read_card()
+            rfid_reader.close()  # Close immediately after reading
+
+            if not rfid_tag:
+                return jsonify({'error': 'No RFID tag detected'}), 400
+
             cursor = mysql.connection.cursor()
-            cursor.execute("SELECT * FROM students WHERE tag_no = %s", (self.RFIDtag,))
+            cursor.execute("SELECT * FROM students WHERE tag_no = %s", (rfid_tag,))
             user = cursor.fetchone()
             cursor.close()
 
             if user:
-                return jsonify({
-                    'user': user  # Sending user data as JSON
-                })
+                return jsonify({'user': user})  # Returning user data
             else:
                 return jsonify({'error': 'User not found'}), 404
 
-
-    
-
-
     def run(self):
-        self.app.run(debug=True)
+        self.app.run(debug=True, use_reloader=False)  # Prevent Flask from running twice
 
 nano_scan = NanoScan(__name__)  
 nano_scan.setup_route()
