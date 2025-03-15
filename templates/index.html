@@ -7,13 +7,16 @@
     <title>Nano Scan</title>
 </head>
 <body>
-    <h1>{{rfidTag}}</h1>
-    <button onclick="fetchUser()" >Scan Now</button><!-- TEMPORARY -->
-    <p id="data"></p><!-- TEMPORARY -->
-    
+    <div class="container">
+        <h1>Nano Scan</h1>
+        <button onclick="fetchUser()">Scan Now</button>
+        
+        <div id="data-container">
+            <h2>Student Information</h2>
+            <div id="data" class="user-data">Scan to display user details.</div>
+        </div>
+    </div>
 
-   <a href="{{url_for('about')}}">About us</a>
-
-<script src="{{ url_for('static', filename='js/script.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/script.js')}}"></script>
 </body>
 </html>
