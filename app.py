@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template
 from flask_mysqldb import MySQL
-from RFIDreader import Reader  # Import the RFID reader class
+from RFIDreader import Reader  
 
 mysql = MySQL()
 
@@ -28,7 +28,7 @@ class NanoScan:
         @self.app.route("/fetch-user")
         def fetch_user():
             """Scans RFID and fetches user from MySQL."""
-            rfid_reader = Reader(port="COM3")  # Initialize inside request
+            rfid_reader = Reader(port="COM3")  
             rfid_reader.connect()
             rfid_tag = rfid_reader.read_card()
             rfid_reader.close()  # Close immediately after reading
@@ -42,12 +42,12 @@ class NanoScan:
             cursor.close()
 
             if user:
-                return jsonify({'user': user})  # Returning user data
+                return jsonify({'user': user}) 
             else:
                 return jsonify({'error': 'User not found'}), 404
 
     def run(self):
-        self.app.run(debug=True, use_reloader=False)  # Prevent Flask from running twice
+        self.app.run(debug=True, use_reloader=False)  
 
 nano_scan = NanoScan(__name__)  
 nano_scan.setup_route()

@@ -12,10 +12,10 @@ class Reader:
         """Ensures the previous connection is closed before opening a new one."""
         try:
             if self.serial_conn and self.serial_conn.is_open:
-                self.serial_conn.close()  # Force close if already open
+                self.serial_conn.close()  
 
             self.serial_conn = serial.Serial(self.port, self.baudrate, timeout=self.timeout)
-            time.sleep(5)  # Allow time for initialization
+            time.sleep(5)  
             print(f"✅ Connected to RFID reader on {self.port}")
         except serial.SerialException as e:
             print(f"❌ Error connecting to RFID reader: {e}")
