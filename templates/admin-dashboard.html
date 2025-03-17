@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome Admin {{adminProfile[1]}}</h1>
+        <br>
+        <button onclick="fetchrfid()" id="register-rfid-btn">REGISTER RFID</button>
+        <p id="flash"></p>
+
+        <p id="flash"></p>
+        
+        <!-- Register RFID Modal -->
+        <div class="modal fade" id="register-rfid" tabindex="-1" aria-labelledby="register-rfid-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content" style="background: #1e1e1e; color: #e0e0e0; border-radius: 12px;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="register-rfid-label">Register RFID</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-start">
+                        <form method="post" action="/admin-register-rfid">
+                            <div class="mb-3">
+                                <label for="student_id" class="form-label">Student ID</label>
+                                <input type="text" name="student_id" id="student_id" class="form-control" placeholder="Enter student ID" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstname" class="form-label">First Name</label>
+                                <input type="text" name="firstname" id="firstname" class="form-control" placeholder="Enter first name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="lastname" class="form-label">Last Name</label>
+                                <input type="text" name="lastname" id="lastname" class="form-control" placeholder="Enter last name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="parent_phone" class="form-label">Parent's Phone</label>
+                                <input type="text" name="parent_phone" id="parent_phone" class="form-control" placeholder="Enter parent's phone number" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="student_phone" class="form-label">Student's Phone</label>
+                                <input type="text" name="student_phone" id="student_phone" class="form-control" placeholder="Enter student's phone number" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="section" class="form-label">Section</label>
+                                <input type="text" name="section" id="section" class="form-control" placeholder="Enter section" required>
+                            </div>
+                            <input type="hidden" name="tag_no" id="tag_no"> <!-- Hidden tag_no field -->
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Register Student</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script src="{{ url_for('static', filename='js/admin-script.js')}}"></script>
+    
+</body>
+</html>
