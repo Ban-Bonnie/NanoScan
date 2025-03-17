@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2025 at 02:38 PM
+-- Generation Time: Mar 17, 2025 at 06:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,12 +24,33 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `admin_accounts`
+--
+
+CREATE TABLE `admin_accounts` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `admin_accounts`
+--
+
+INSERT INTO `admin_accounts` (`id`, `name`, `username`, `password`) VALUES
+(1, 'Bonnie', 'Bonnie132', 'bonnie123'),
+(2, 'Ejvind', 'admin', 'admin123');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rfid`
 --
 
 CREATE TABLE `rfid` (
   `tag_Id` int(255) NOT NULL,
-  `tag_No` varchar(255) NOT NULL,
+  `tag_no` varchar(255) NOT NULL,
   `registered` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -37,9 +58,42 @@ CREATE TABLE `rfid` (
 -- Dumping data for table `rfid`
 --
 
-INSERT INTO `rfid` (`tag_Id`, `tag_No`, `registered`) VALUES
-(1, '1H 6H 8U 1A', 1),
-(2, '8U 2J 0E 1W', 1);
+INSERT INTO `rfid` (`tag_Id`, `tag_no`, `registered`) VALUES
+(1, '23646329', 1),
+(2, '43907e28', 1),
+(3, 'd8ac8790', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `section_schedule`
+--
+
+CREATE TABLE `section_schedule` (
+  `id` int(11) NOT NULL,
+  `section` varchar(50) NOT NULL,
+  `subject_name` varchar(100) NOT NULL,
+  `day_of_week` enum('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday') NOT NULL,
+  `start_time` time NOT NULL,
+  `end_time` time NOT NULL,
+  `subject_teacher` varchar(50) NOT NULL,
+  `room` varchar(50) NOT NULL
+) ;
+
+--
+-- Dumping data for table `section_schedule`
+--
+
+INSERT INTO `section_schedule` (`id`, `section`, `subject_name`, `day_of_week`, `start_time`, `end_time`, `subject_teacher`, `room`) VALUES
+(1, 'FC1-BSIT2-4', 'People and Earth\'s Ecosystem', 'Friday', '07:30:00', '09:00:00', 'Marjorie Frajilla', 'ML405'),
+(2, 'FC1-BSIT2-4', 'Philippine History', 'Friday', '09:00:00', '10:30:00', 'Katrina Bautista', 'ML405'),
+(3, 'FC1-BSIT2-4', 'Human Computer Interaction 2', 'Friday', '10:30:00', '12:00:00', 'Krislyn Sinoy', 'ML402'),
+(4, 'FC1-BSIT2-4', 'Systems Integration', 'Friday', '06:00:00', '09:00:00', 'Melene Akil', 'CL4'),
+(5, 'FC1-BSIT2-4', 'Physical Education ', 'Saturday', '08:00:00', '09:00:00', 'Ria Marquez', 'GYM'),
+(6, 'FC1-BSIT2-4', 'Student Success Program', 'Saturday', '09:00:00', '10:00:00', 'Aira Silvestre', 'ML402'),
+(7, 'FC1-BSIT2-4', 'App Development', 'Saturday', '11:00:00', '13:30:00', 'Jean Gran', 'CL6'),
+(8, 'FC1-BSIT2-4', 'Entrepreneurial Mind', 'Saturday', '15:00:00', '16:30:00', 'Mae Gonzales', 'ML405'),
+(9, 'FC1-BSIT2-4', 'Web System and Technologies', 'Saturday', '18:00:00', '21:00:00', 'Marvin Aungon', 'CL1');
 
 -- --------------------------------------------------------
 
@@ -48,26 +102,34 @@ INSERT INTO `rfid` (`tag_Id`, `tag_No`, `registered`) VALUES
 --
 
 CREATE TABLE `students` (
-  `student_id` int(15) NOT NULL,
+  `id` int(15) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
   `parent_phone` varchar(15) NOT NULL,
   `student_phone` varchar(15) NOT NULL,
   `tag_no` varchar(255) DEFAULT NULL,
-  `section` varchar(255) DEFAULT NULL
+  `section` varchar(255) DEFAULT NULL,
+  `student_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `students`
 --
 
-INSERT INTO `students` (`student_id`, `first_name`, `last_name`, `parent_phone`, `student_phone`, `tag_no`, `section`) VALUES
-(1, 'Bonnie', 'Franco', '09125782910', '09726512344', '1H 6H 8U 1A', 'FC1-BSIT2-4'),
-(2, 'Ejvind Gem', 'Gimotea', '09125782910', '09726512344', '8U 2J 0E 1W', 'FC1-BSIT2-4');
+INSERT INTO `students` (`id`, `first_name`, `last_name`, `parent_phone`, `student_phone`, `tag_no`, `section`, `student_id`) VALUES
+(1, 'Bonnie', 'Franco', '09125782910', '09726512344', '23646329', 'FC1-BSIT2-4', '04-2324-032584'),
+(2, 'Ejvind Gem', 'Gimotea', '09125782910', '09726512344', '43907e28', 'FC1-BSIT2-4', '04-2324-033281'),
+(3, 'John Mic Khael', 'Sumbing', '09125723910', '09726512123', 'd8ac8790', 'FC2-BSIT2-4', '04-2324-037511');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `admin_accounts`
+--
+ALTER TABLE `admin_accounts`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `rfid`
@@ -76,26 +138,44 @@ ALTER TABLE `rfid`
   ADD PRIMARY KEY (`tag_Id`);
 
 --
+-- Indexes for table `section_schedule`
+--
+ALTER TABLE `section_schedule`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
-  ADD PRIMARY KEY (`student_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
+-- AUTO_INCREMENT for table `admin_accounts`
+--
+ALTER TABLE `admin_accounts`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `rfid`
 --
 ALTER TABLE `rfid`
-  MODIFY `tag_Id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `tag_Id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `section_schedule`
+--
+ALTER TABLE `section_schedule`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `students`
 --
 ALTER TABLE `students`
-  MODIFY `student_id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
