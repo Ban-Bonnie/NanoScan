@@ -6,7 +6,7 @@ function fetchrfid() {
         let rfid = data.rfid;
         if (rfid) {
             document.getElementById("tag_no").value = rfid; // Set hidden RFID field
-            let modal = new bootstrap.Modal(document.getElementById('register-rfid-modal')); 
+            let modal = new bootstrap.Modal(document.getElementById('register-rfid')); 
             modal.show(); // Open modal
         }
     })

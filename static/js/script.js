@@ -7,10 +7,10 @@ function fetchUser() {
         if (user) {
             document.getElementById("data").innerHTML = `
                 
-                <p><strong>Name:</strong> ${user[2]} ${user[3]}</p>
-                <p><strong>Student Phone:</strong> ${user[5]}</p>
-                <p><strong>Section:</strong> ${user[7]}</p>
-                <p><strong>RFID Tag:</strong> ${user[6]}</p>
+                <p><strong>Name:</strong> ${user[1]} ${user[2]}</p>
+                <p><strong>Student Phone:</strong> ${user[4]}</p>
+                <p><strong>Section:</strong> ${user[6]}</p>
+                <p><strong>RFID Tag:</strong> ${user[5]}</p>
             `;
         } else {
             document.getElementById("data").innerHTML = "<p style='color: red;'>User not found.</p>";
