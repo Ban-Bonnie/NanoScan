@@ -7,8 +7,11 @@ mysql = MySQL()
 class NanoScan:
     def __init__(self, name):
         self.app = Flask(name)
-        self.userInstance = None  # Unused but keeping it
+        self.userInstance = None  
+        self.userSchedule = None
+
         self.adminInstance = None
+        
 
         # Database Configuration
         self.app.config['MYSQL_HOST'] = "localhost"
@@ -46,12 +49,20 @@ class NanoScan:
             if not rfid_tag:
                 return jsonify({'error': 'No RFID tag detected'}), 400
             else:
+                #get user
                 cursor = mysql.connection.cursor()
                 cursor.execute("SELECT * FROM students WHERE tag_no = %s", (rfid_tag,))
                 user = cursor.fetchone()
+                
+
+                #get user schedule
+                cursor.execute("SELECT * FROM section_schedule WHERE section = %s",(user[7]))
+                self.userSchedule = cursor.fetchall()
+                print(self.userSchedule) #remove
                 cursor.close()
 
             if user:
+                self.userInstance = user
                 return jsonify({'user': user}) 
             else:
                 return jsonify({'error': 'User not found'}), 404
@@ -77,7 +88,7 @@ class NanoScan:
                 cursor.execute("SELECT * FROM admin_accounts WHERE username = %s AND password = %s",(username,password))
                 isAdmin = cursor.fetchone()
                 self.adminInstance = isAdmin
-
+                cursor.close()
                 if(isAdmin == None):
                     print('incorrect password or username')
                     return redirect(url_for('home'))
@@ -92,6 +103,7 @@ class NanoScan:
         @self.app.route("/admin-register-rfid", methods=["POST","GET"])
         def registerRFID():
             if request == "POST":
+
                 student_id = request.form["student_id"]
                 firstname = request.form["firstname"]
                 lastname = request.form["lastname"]
@@ -99,10 +111,50 @@ class NanoScan:
                 student_phone = request.form["student_phone"]
                 tag_no = request.form["tag_no"]
                 section = request.form["section"]
+                
+                try:
+                    cursor = mysql.connection.cursor()
+                    
+                    # Add student to student table
+                    cursor.execute(
+                        "INSERT INTO students (student_id, first_name, last_name, parent_phone, student_phone, tag_no, section) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                        (student_id, firstname, lastname, parent_phone, student_phone, tag_no, section)
+                    )
 
+                    # Register RFID to RFID list
+                    cursor.execute(
+                        "INSERT INTO rfid (tag_no, registered) VALUES (%s, %s)", 
+                        (tag_no, "1")
+                    )
+
+                    mysql.connection.commit()
+                    
+                except Exception as e:
+                    mysql.connection.rollback()  
+                    print(f"Error: {e}")  
+                    
+                finally:
+                    cursor.close()
 
             else:
                 return redirect(url_for('home'))
+        
+        @self.app.route("/fetch-user-details")
+        def fetch_user_details():
+            user = self.userInstance
+
+            cursor = mysql.connection.cursor()
+
+            #get user schedule
+            cursor.execute("SELECT * FROM section_schedule WHERE section = %s",(user[7]))
+            self.userSchedule = cursor.fetchall()
+            print(self.userSchedule) #remove
+
+            #Make userIsLate() when have access with arduino
+
+            #camera API to database
+
+        
 
     def run(self):
         self.app.run(debug=True, use_reloader=False)  
