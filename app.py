@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request,redirect,url_for
 from flask_mysqldb import MySQL
 from RFIDreader import Reader
+from datetime import timedelta
 
 mysql = MySQL()
 
@@ -34,7 +35,6 @@ class NanoScan:
 
 
         #processes
-        @self.app.route("/scan-rfid")
         def scan_rfid():
             rfid_reader = Reader(port="COM3")  
             rfid_reader.connect()
@@ -44,38 +44,68 @@ class NanoScan:
 
         @self.app.route("/fetch-user")
         def fetch_user():
-            rfid_tag = scan_rfid()
+            try:
+                rfid_tag = scan_rfid()
 
-            if not rfid_tag:
-                return jsonify({'error': 'No RFID tag detected'}), 400
-            else:
-                #get user
+                if not rfid_tag:
+                    return jsonify({'error': 'No RFID tag detected'}), 400
+
+                print("✅ RFID scanned:", rfid_tag)
+
+                # Get user
                 cursor = mysql.connection.cursor()
                 cursor.execute("SELECT * FROM students WHERE tag_no = %s", (rfid_tag,))
                 user = cursor.fetchone()
-                
 
-                #get user schedule
-                cursor.execute("SELECT * FROM section_schedule WHERE section = %s",(user[7]))
-                self.userSchedule = cursor.fetchall()
-                print(self.userSchedule) #remove
+                if not user:
+                    cursor.close()
+                    return jsonify({'error': 'User not found'}), 404
+
+                user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no"]
+                user_dict = dict(zip(user_keys, user))
+
+                # Get user schedule
+                cursor.execute("SELECT * FROM section_schedule WHERE section = %s", (user_dict["section"],))
+                schedule_data = cursor.fetchall()
+
+                column_names = [desc[0] for desc in cursor.description]
+                user_schedule = []
+
+                #Convert timedelta to string
+                for row in schedule_data:
+                    row_dict = dict(zip(column_names, row))
+                    
+                    if isinstance(row_dict["start_time"], timedelta):
+                        row_dict["start_time"] = str(row_dict["start_time"])
+                    if isinstance(row_dict["end_time"], timedelta):
+                        row_dict["end_time"] = str(row_dict["end_time"])
+
+                    user_schedule.append(row_dict)
+
+
                 cursor.close()
 
-            if user:
-                self.userInstance = user
-                return jsonify({'user': user}) 
-            else:
-                return jsonify({'error': 'User not found'}), 404
+                return jsonify({
+                    'user': user_dict,
+                    'userSchedule': user_schedule
+                })
+
+            except Exception as e:
+                import traceback
+                traceback.print_exc() 
+                return jsonify({'error': f'Internal Server Error: {str(e)}'}), 500
 
         @self.app.route("/register-rfid")
         def register_rfid():
             rfid = scan_rfid()
             print(rfid)
-
             if not rfid:
                 return jsonify({'error': 'No RFID tag detected'}), 400
-            else:
-                return jsonify({'rfid': rfid}) 
+
+            if rfidIsRegistered(rfid):
+                return jsonify({'error': 'RFID tag already registered'}), 400
+
+            return jsonify({'rfid': rfid}) 
 
         @self.app.route("/admin-login",methods=['POST', 'GET'])
         def admin_login():
@@ -94,7 +124,6 @@ class NanoScan:
                     return redirect(url_for('home'))
 
                 else:
-                    
                     return redirect(url_for('admin'))
 
             else:
@@ -102,7 +131,7 @@ class NanoScan:
         
         @self.app.route("/admin-register-rfid", methods=["POST","GET"])
         def registerRFID():
-            if request == "POST":
+            if request.method == "POST":
 
                 student_id = request.form["student_id"]
                 firstname = request.form["firstname"]
@@ -111,20 +140,20 @@ class NanoScan:
                 student_phone = request.form["student_phone"]
                 tag_no = request.form["tag_no"]
                 section = request.form["section"]
-                
+                program = request.form["program"]
                 try:
                     cursor = mysql.connection.cursor()
                     
                     # Add student to student table
                     cursor.execute(
-                        "INSERT INTO students (student_id, first_name, last_name, parent_phone, student_phone, tag_no, section) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        (student_id, firstname, lastname, parent_phone, student_phone, tag_no, section)
+                        "INSERT INTO students (student_id, first_name, last_name, parent_phone, student_phone, tag_no, section, program) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)",
+                        (student_id, firstname, lastname, parent_phone, student_phone, tag_no, section,program)
                     )
 
                     # Register RFID to RFID list
                     cursor.execute(
                         "INSERT INTO rfid (tag_no, registered) VALUES (%s, %s)", 
-                        (tag_no, "1")
+                        (tag_no, 1)
                     )
 
                     mysql.connection.commit()
@@ -135,24 +164,20 @@ class NanoScan:
                     
                 finally:
                     cursor.close()
+                    return redirect(url_for('admin'))
 
             else:
                 return redirect(url_for('home'))
         
-        @self.app.route("/fetch-user-details")
-        def fetch_user_details():
-            user = self.userInstance
-
+            
+        
+        def rfidIsRegistered(rfid):
             cursor = mysql.connection.cursor()
-
-            #get user schedule
-            cursor.execute("SELECT * FROM section_schedule WHERE section = %s",(user[7]))
-            self.userSchedule = cursor.fetchall()
-            print(self.userSchedule) #remove
-
-            #Make userIsLate() when have access with arduino
-
-            #camera API to database
+            cursor.execute("SELECT tag_no FROM rfid WHERE registered = %s", (1,))
+            tags = cursor.fetchall() 
+            tags = [tag[0] for tag in tags]
+            print("RFID is registered: " ,rfid in tags  )
+            return rfid in tags  
 
         
 

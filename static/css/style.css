@@ -1,14 +1,14 @@
 /* General Page Styling */
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #121212;
+    
     color: #e0e0e0;
-    display: flex;
-    justify-content: center;
     align-items: center;
+    
+    text-align: center;
+    background: linear-gradient(to right, #060a1f, #141b5d);
     height: 100vh;
     margin: 0;
-    text-align: center;
 }
 
 /* Container */
@@ -95,4 +95,20 @@ button:active {
         font-size: 1rem;
         padding: 14px;
     }
+}
+/* Schedule */
+
+table {
+    margin-top: 2rem;
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+th, td {
+    border: 1px solid black;
+    padding: 10px;
+}
+th {
+    background-color: #333;
+    color: white;
 }

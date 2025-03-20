@@ -1,6 +1,12 @@
 function fetchrfid() {
+    document.getElementById("flash").innerHTML = "";
     fetch('/register-rfid')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errData => { throw new Error(errData.error); });
+        }
+        return response.json();
+    })
     .then(data => {
         console.log(data);
         let rfid = data.rfid;
@@ -11,7 +17,9 @@ function fetchrfid() {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        document.getElementById("flash").innerHTML = "<p style='color: red;'>Error fetching data.</p>";
+        console.error('Error:', error.message);  // Log error properly
+        
+        document.getElementById("flash").innerHTML = `<p style='color: red;'>${error.message}</p>`;
     });
 }
+

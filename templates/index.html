@@ -18,7 +18,7 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#admin-login-modal">
             Admin Login
         </button>
-        <button onclick="fetchUser()">Scan Now</button>
+        <button onclick="autoFetchUser()">Scan Now</button>
         
         
         <div id="data-container">
@@ -27,8 +27,6 @@
         </div>
 
     </div>
-
-  
 
     <!-- Modal -->
     <div class="modal fade" id="admin-login-modal" tabindex="-1" aria-labelledby="admin-login-label" aria-hidden="true">
@@ -50,7 +48,7 @@
                         </div>
                         <!-- Submit Button Inside Form -->
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Login</button>
+                            <button onclick="stopScan()" type="submit" class="btn btn-primary">Login</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -58,6 +56,8 @@
             </div>
         </div>
     </div>
+
+    <div id="schedule"></div>
 
 
 
