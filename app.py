@@ -26,7 +26,8 @@ class NanoScan:
         #Web Routes
         @self.app.route("/")
         def home():
-            return render_template("index.html")
+            return render_template("index1.html")
+
 
         @self.app.route("/admin")
         def admin():
@@ -46,7 +47,10 @@ class NanoScan:
         def fetch_user():
             try:
                 rfid_tag = scan_rfid()
-
+                
+                if rfidIsAdmin(rfid_tag):
+                    return jsonify({'redirect': url_for('admin')})
+                
                 if not rfid_tag:
                     return jsonify({'error': 'No RFID tag detected'}), 400
 
@@ -60,8 +64,10 @@ class NanoScan:
                 if not user:
                     cursor.close()
                     return jsonify({'error': 'User not found'}), 404
+                
+                
 
-                user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no"]
+                user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no", "program"]
                 user_dict = dict(zip(user_keys, user))
 
                 # Get user schedule
@@ -101,7 +107,7 @@ class NanoScan:
             print(rfid)
             if not rfid:
                 return jsonify({'error': 'No RFID tag detected'}), 400
-
+            
             if rfidIsRegistered(rfid):
                 return jsonify({'error': 'RFID tag already registered'}), 400
 
@@ -152,8 +158,8 @@ class NanoScan:
 
                     # Register RFID to RFID list
                     cursor.execute(
-                        "INSERT INTO rfid (tag_no, registered) VALUES (%s, %s)", 
-                        (tag_no, 1)
+                        "INSERT INTO rfid (tag_no, registeredn, admin) VALUES (%s, %s, %s)", 
+                        (tag_no, 1,0)
                     )
 
                     mysql.connection.commit()
@@ -177,6 +183,14 @@ class NanoScan:
             tags = cursor.fetchall() 
             tags = [tag[0] for tag in tags]
             print("RFID is registered: " ,rfid in tags  )
+            return rfid in tags  
+        
+        def rfidIsAdmin(rfid):
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT tag_no FROM rfid WHERE admin = %s", (1,))
+            tags = cursor.fetchall() 
+            tags = [tag[0] for tag in tags]
+            print("RFID is admin: " ,rfid in tags )
             return rfid in tags  
 
         

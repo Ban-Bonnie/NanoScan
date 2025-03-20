@@ -1,19 +1,44 @@
 function autoFetchUser() {
-    let student_details = document.getElementById("data");
-    let schedule_element = document.getElementById("schedule");
+    let student_details = document.getElementById("student-id-card");
+    let student_image = document.getElementById("student-image");
+    let flash = document.getElementById("flash");
+    let schedule_element = document.querySelector("#scheduleModal .schedule-modal-content .schedule-table-wrapper");
+
+    if (!student_details || !student_image || !flash || !schedule_element) {
+        console.error("One or more elements are missing.");
+        return;
+    }
 
     fetch('/fetch-user')
     .then(response => {
         if (!response.ok) {
+            if (response.status === 404) {
+                console.log("User is not registered");
+                flash.innerHTML = "USER NOT REGISTERED"
+                return null; // Stop further execution
+            }
+            if (response.status === 400) {
+                console.log("No RFID detected");
+                return null;
+            }
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         return response.json();
     })
     .then(data => {
-        console.log(data);
+        
+        /* Redirect To admin if admin */
+        if (data.redirect) {
+            window.location.href = data.redirect;  
+            return; 
+        }
+
+        if (!data) return; // Stop execution if user is not found
+
+        console.log("✅ Data received:", data);
 
         if (data.error) {
-            student_details.innerHTML = `<p style='color: red;'>${data.error}</p>`;
+            flash.innerHTML = `<p style='color: red;'>${data.error}</p>`;
             schedule_element.innerHTML = "";
             return;
         }
@@ -21,24 +46,19 @@ function autoFetchUser() {
         let user = data.user;
         let userSchedule = data.userSchedule;
 
-        // Display user details
         if (user) {
             student_details.innerHTML = `
-                <img src="${user.profile_pic || 'static/img/default-avatar.jpg'}" alt="Profile Picture" width="100" height="100" style="border-radius: 50%;">
-                <p><strong>Name:</strong> ${user.first_name} ${user.last_name}</p>
-                <p><strong>ID No.:</strong> ${user.id_no}</p>
-                <p><strong>Section:</strong> ${user.section}</p>
-                <p><strong>RFID Tag:</strong> ${user.tag_no}</p>
+                <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
+                <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
+                <p id="program" class="fs-6">${user.program}</p>
+                <p id="section" class="fs-6">${user.section}</p>
             `;
-        } else {
-            student_details.innerHTML = "<p style='color: red;'>User not found.</p>";
-        }
+            student_image.src = user.profile_pic ? user.profile_pic : 'static/img/default-avatar.jpg';
+        } 
 
-        // Display user schedule
-        if (userSchedule && userSchedule.length > 0) {
+        if (Array.isArray(userSchedule) && userSchedule.length > 0) {
             let scheduleHTML = `
-                <h3>Class Schedule</h3>
-                <table border="1">
+                <table>
                     <tr>
                         <th>Subject</th>
                         <th>Day</th>
@@ -55,11 +75,10 @@ function autoFetchUser() {
                         <td>${schedule.start_time} - ${schedule.end_time}</td>
                         <td>${schedule.subject_teacher}</td>
                         <td>${schedule.room}</td>
-                    </tr>
-                `;
+                    </tr>`;
             });
 
-            scheduleHTML += "</table>";
+            scheduleHTML += `</table>`;
             schedule_element.innerHTML = scheduleHTML;
         } else {
             schedule_element.innerHTML = "<p style='color: red;'>No schedule found.</p>";
@@ -67,12 +86,5 @@ function autoFetchUser() {
     })
     .catch(error => {
         console.error('Error:', error);
-    
-        // If it's a 400 error (no RFID detected), do nothing
-        if (error.message.includes("400")) return;
-    
-        student_details.innerHTML = `<p style='color: red;'>User is not registered</p>`;
-        schedule_element.innerHTML = "";
-        schedule_element.innerHTML = "<p style='color: red;'>No schedule found.</p>";
     });
 }

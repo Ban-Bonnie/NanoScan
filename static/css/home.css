@@ -2,4 +2,260 @@ body {
     background: linear-gradient(to right, #060a1f, #141b5d);
     height: 100vh;
     margin: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.container-wrapper {
+    display: flex;
+    flex-direction: row; /* Align items in a row */
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* Add space between the ID card and navigation */
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* ID Card */
+.id-card {
+    background-color: #d9d9d9;
+    width: 100%;
+    max-width: 550px;
+    min-height: 320px;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.img-fluid {
+    filter: brightness(0) invert(1);
+}
+
+/* Hover Effect */
+.id-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/* ID Card Content */
+.content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+/* Profile Picture */
+.picture-box {
+    width: 150px;
+    height: 150px;
+    background-color: #000c5d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.info {
+    text-align: left;
+    flex: 1;
+    min-width: 200px;
+}
+
+.buttons-and-navigation {
+    /* background: linear-gradient(to bottom right, #040a24 70%, #0e1a4b 100%); */ /* Darker complementing gradient */
+    background-color: #040a24;
+    width: 100%;
+    max-width: 400px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover Effect */
+.buttons-and-navigation:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Button Styling */
+button {
+    width: 200px;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background: linear-gradient(45deg, #23466e, #1c3faa); /* Blue Gradient */
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover Animation */
+button:hover {
+    background: linear-gradient(45deg, #1c3faa, #3581d8); /* Reverse Blue Gradient */
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#clear-btn {
+    width: 200px;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background: linear-gradient(45deg, #d90429, #a4001d); /* Red gradient */
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Hover Effect */
+#clear-btn:hover {
+    background: linear-gradient(45deg, #a4001d, #d90429); /* Reverse red gradient */
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+
+/* Title Bar */
+.title-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+
+.title-bar img {
+    max-width: 80px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .container-wrapper {
+        flex-direction: column; /* Stack items in a column on smaller screens */
+        align-items: center;
+    }
+
+    .buttons-and-navigation {
+        width: 90%;
+        min-height: auto;
+        padding: 30px;
+    }
+
+    button {
+        width: 80%;
+    }
+}
+
+/* Schedule Modal */
+.schedule-modal {
+    display: none;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+}
+
+
+.schedule-modal-content {
+    position: absolute;
+    bottom: -100%; 
+    opacity: 0; 
+    width: 100%;
+    height: 70vh; 
+    background: linear-gradient(to right, #060a1f, #141b5d); 
+    border-radius: 15px 15px 0 0; 
+    padding: 20px;
+    box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.2);
+    transition: bottom 0.4s ease-in-out; 
+    display: flex;
+    flex-direction: column;
+}
+
+
+.schedule-modal .schedule-modal-content {
+    transition: bottom 0.4s ease-in-out, opacity 0.3s ease-in;
+}
+.schedule-modal.show .schedule-modal-content {
+    bottom: 0;
+    opacity: 1;
+}
+.schedule-modal:not(.show) .schedule-modal-content {
+    bottom: -100%;
+    opacity: 0;
+}
+
+/* Close Button */
+.schedule-close {
+    color: red;
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.schedule-close:hover {
+    color: darkred;
+}
+
+
+/* Scrollable Table Container */
+.schedule-table-wrapper {
+    flex-grow: 1; 
+    overflow-y: auto; 
+}
+
+/* Table Styles */
+.schedule-table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.schedule-table-wrapper th, .schedule-table-wrapper td {
+    border: 4px solid black;
+    padding: 10px;
+    text-align: center;
+}
+
+.schedule-table-wrapper th {
+    background:#000c5d;/* Table Head */
+    color: white;
+}
+
+.schedule-table-wrapper tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+.schedule-table-wrapper tr:nth-child(odd) {
+    background:#3581d8;
 }
