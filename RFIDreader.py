@@ -18,12 +18,13 @@ class Reader:
             time.sleep(5)  
             print(f"✅ Connected to RFID reader on {self.port}")
         except serial.SerialException as e:
-            print(f"❌ Error connecting to RFID reader: {e}")
+            #print(f"❌ Error connecting to RFID reader: {e}")
+            pass
 
     def read_card(self):
         """Reads RFID tag data."""
         if not self.serial_conn or not self.serial_conn.is_open:
-            print("⚠️ RFID reader not connected.")
+            #print("⚠️ RFID reader not connected.")
             return None
 
         try:
