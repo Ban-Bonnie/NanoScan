@@ -1,114 +1,317 @@
-/* General Page Styling */
 body {
-    font-family: 'Arial', sans-serif;
-    
-    color: #e0e0e0;
-    align-items: center;
-    
-    text-align: center;
-    background: linear-gradient(to right, #060a1f, #141b5d);
+    background: linear-gradient(to right, #0a061f, #2d1460);
     height: 100vh;
     margin: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
 }
 
-/* Container */
-.container {
-    background: #1e1e1e;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
-    max-width: 450px;
-    width: 90%;
+
+
+.title-bar img {
+    max-width: 80px;
 }
 
-/* Gradient Title */
-h1 {
-    font-size: 2rem;
-    background: linear-gradient(90deg, #0077cc, #0051a8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 15px;
+/* Container Wrapper */
+.container-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
 }
 
-/* Button Styling */
-button {
-    background-color: #0051a8;
+
+
+
+
+.content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+}
+
+/* Profile Picture */
+.picture-box {
+    width: 150px;
+    height: 150px;
+    background-color: #291b50;
     color: white;
-    padding: 12px 20px;
-    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+/* Student Info */
+.info {
+    text-align: left;
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Buttons and Navigation */
+.buttons-and-navigation {
+    background-color: #33205c24;
+    width: 100%;
+    max-width: 400px;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.buttons-and-navigation:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.5);
+}
+
+/* Buttons */
+button {
+    width: 200px;
+    padding: 12px;
+    margin: 10px 0;
     border: none;
     border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.1s ease-in-out;
-    display: block;
-    width: 100%;
-    margin: 10px 0;
+    color: black;
+     /* Warm golden-orange */
+    transition: all 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
-    background-color: #003f85;
+    transform: scale(1.05);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3);
+    color: #f0e6ff;
 }
 
-button:active {
-    transform: scale(0.98);
+/* Title Bar */
+.title-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: absolute;
+    left: 20px;
+    top: 20px;
 }
 
-/* User Data Section */
-#data-container {
-    margin-top: 20px;
-    text-align: left;
-    background: #242424;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+.text-gradient{
+    color: white;
 }
 
-#data-container h2 {
-    font-size: 1.2rem;
-    color: #b0b0b0;
-    border-bottom: 2px solid #0051a8;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
+.img-fluid {
+    filter: brightness(0) invert(1);
+}
+.admin-gradient {
+    background: linear-gradient(to right, #ff7e5f, #feb47b, #ff8c00, #e52e71, #8a2be2);
+    
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    font-size: 2rem;
 }
 
-/* User Data Display */
-.user-data {
-    font-size: 1rem;
-    color: #dcdcdc;
-    background: #2a2a2a;
-    padding: 12px;
-    border-radius: 6px;
-    line-height: 1.6;
+
+
+
+/* Button Colors */
+#register-student-btn {
+    background: linear-gradient(45deg, #168aad, #1e6091); 
+}
+
+#register-student-btn:hover {
+    background: linear-gradient(45deg, #1e6091, #52b8c2); 
+}
+
+#openStudentsModal-btn {
+    background: linear-gradient(45deg, #e3a252, #f7b500);
+}
+
+#openStudentsModal-btn:hover {
+    background: linear-gradient(45deg, #f7b500, #ffcf66);
+}
+
+
+#logout-btn {
+    background: linear-gradient(45deg, #d90429, #a4001d);
+}
+
+#logout-btn:hover {
+    background: linear-gradient(45deg, #a4001d, #d90429);
 }
 
 /* Responsive Design */
-@media (max-width: 600px) {
-    .container {
-        width: 95%;
+@media (max-width: 900px) {
+    .container-wrapper {
+        flex-direction: column;
+        align-items: center;
     }
 
-    h1 {
-        font-size: 1.8rem;
+    .buttons-and-navigation {
+        width: 90%;
+        min-height: auto;
+        padding: 30px;
     }
 
     button {
-        font-size: 1rem;
-        padding: 14px;
+        width: 80%;
     }
 }
-/* Schedule */
 
-table {
-    margin-top: 2rem;
+/* LOADER */
+.free-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background-color: #1a113100;
     width: 100%;
-    border-collapse: collapse;
-    text-align: center;
+    max-width: 550px;
+    min-height: 320px;
+    border-radius: 15px;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: center;
 }
-th, td {
-    border: 1px solid black;
-    padding: 10px;
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    animation: rotate-circle 3s infinite ease-in-out;
 }
-th {
-    background-color: #333;
-    color: white;
+
+.dot {
+    width: 20px;
+    height: 20px;
+    background-color: #f00;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    animation: bounce 1.4s ease-in-out infinite, glow 1.4s infinite alternate, color-change 3s infinite ease-in-out;
+}
+
+.dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+.orbit-container {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.orbit-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #ff0;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff0;
+    animation: orbit 3s linear infinite;
+}
+
+.orbit-dot:nth-child(1) {
+    top: 0;
+    left: 50%;
+    animation-delay: -1s;
+}
+
+.orbit-dot:nth-child(2) {
+    top: 50%;
+    left: 100%;
+    animation-delay: -2s;
+}
+
+.orbit-dot:nth-child(3) {
+    top: 100%;
+    left: 50%;
+    animation-delay: -3s;
+}
+
+.orbit-dot:nth-child(4) {
+    top: 50%;
+    left: 0;
+    animation-delay: -4s;
+}
+
+@keyframes bounce {
+    0%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-15px);
+    }
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    }
+    50% {
+        box-shadow: 0 0 20px #f00, 0 0 40px #f00;
+    }
+    100% {
+        box-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    }
+}
+
+@keyframes rotate-circle {
+    0%, 25% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(360deg);
+    }
+    75%, 100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes color-change {
+    0%, 25% {
+        background-color: #f00;
+        box-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    }
+    50% {
+        background-color: #ff0;
+        box-shadow: 0 0 20px #ff0, 0 0 40px #ff0;
+    }
+    75%, 100% {
+        background-color: #f00;
+        box-shadow: 0 0 10px #f00, 0 0 20px #f00;
+    }
+}
+
+@keyframes orbit {
+    0% {
+        transform: rotate(0deg) translateX(50px) rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg) translateX(50px) rotate(-360deg);
+    }
 }

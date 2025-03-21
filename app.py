@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request,redirect,url_for
 from flask_mysqldb import MySQL
 from RFIDreader import Reader
 from datetime import timedelta
+import time
 
 mysql = MySQL()
 
@@ -26,7 +27,7 @@ class NanoScan:
         #Web Routes
         @self.app.route("/")
         def home():
-            return render_template("index1.html")
+            return render_template("index.html")
 
 
         @self.app.route("/admin")
@@ -39,10 +40,14 @@ class NanoScan:
         def scan_rfid():
             rfid_reader = Reader(port="COM3")  
             rfid_reader.connect()
-            rfid_tag = rfid_reader.read_card()
-            rfid_reader.close()  # Close immediately after reading
-            return rfid_tag
 
+            print("status: waiting for RFID")
+            
+            scanned_tag = rfid_reader.read_card()  
+
+            rfid_reader.close()
+            return scanned_tag
+        
         @self.app.route("/fetch-user")
         def fetch_user():
             try:
@@ -138,7 +143,7 @@ class NanoScan:
         @self.app.route("/admin-register-rfid", methods=["POST","GET"])
         def registerRFID():
             if request.method == "POST":
-
+                print("admin-register-rfid")
                 student_id = request.form["student_id"]
                 firstname = request.form["firstname"]
                 lastname = request.form["lastname"]
@@ -147,6 +152,7 @@ class NanoScan:
                 tag_no = request.form["tag_no"]
                 section = request.form["section"]
                 program = request.form["program"]
+                print(program)
                 try:
                     cursor = mysql.connection.cursor()
                     
@@ -158,7 +164,7 @@ class NanoScan:
 
                     # Register RFID to RFID list
                     cursor.execute(
-                        "INSERT INTO rfid (tag_no, registeredn, admin) VALUES (%s, %s, %s)", 
+                        "INSERT INTO rfid (tag_no, registered, admin) VALUES (%s, %s, %s)", 
                         (tag_no, 1,0)
                     )
 
@@ -175,7 +181,11 @@ class NanoScan:
             else:
                 return redirect(url_for('home'))
         
-            
+        @self.app.route("/admin-logout",methods=['POST', 'GET'])  
+        def admin_logout(): 
+            self.userInstance = None
+            self.userSchedule = None
+            return redirect(url_for('home'))
         
         def rfidIsRegistered(rfid):
             cursor = mysql.connection.cursor()
@@ -193,7 +203,6 @@ class NanoScan:
             print("RFID is admin: " ,rfid in tags )
             return rfid in tags  
 
-        
 
     def run(self):
         self.app.run(debug=True, use_reloader=False)  

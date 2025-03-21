@@ -21,22 +21,27 @@ class Reader:
             #print(f"❌ Error connecting to RFID reader: {e}")
             pass
 
-    def read_card(self):
-        """Reads RFID tag data."""
+    def read_card(self, timeout=4):  # Add a timeout parameter
+        """Reads RFID tag data with a timeout."""
         if not self.serial_conn or not self.serial_conn.is_open:
-            #print("⚠️ RFID reader not connected.")
             return None
 
+        start_time = time.time()
+
         try:
-            while True:
+            while time.time() - start_time < timeout:  # Loop until timeout
                 card_data = self.serial_conn.readline().decode('utf-8').strip()
                 if card_data and "RFID Reader Initialized" not in card_data and "Ready to scan" not in card_data:
                     print(f"🎟️ Card detected: {card_data}")
                     return card_data
+                time.sleep(0.5)  # Prevent CPU overuse
+
         except Exception as e:
             print(f"❌ Error reading RFID data: {e}")
             return None
 
+        print("⏳ No RFID detected within timeout.")
+        return None
     def close(self):
         """Closes the connection to the RFID reader."""
         if self.serial_conn and self.serial_conn.is_open:
