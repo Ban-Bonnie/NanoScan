@@ -28,15 +28,14 @@ function autoFetchUser() {
         if (!response.ok) {
             hideLoader();
             disableScanner(false);
-
             if (response.status === 404) {
                 console.log("User is not registered");
-                flash.innerHTML = "USER NOT REGISTERED";
+                clearCard("USER NOT REGISTERED");
                 return null;
             }
             if (response.status === 400) {
                 console.log("No RFID Scanner Timeout");
-                flash.innerHTML = `<p style='color: red;'>No RFID Detected</p>`;
+                clearCard("No RFID Detected");
                 return null;
             }
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -54,7 +53,7 @@ function autoFetchUser() {
         console.log("✅ Data received:", data);
 
         if (data.error) {
-            flash.innerHTML = `<p style='color: red;'>${data.error}</p>`;
+            clearCard(`${data.error}`);
             schedule_element.innerHTML = "";
             return;
         }
@@ -115,9 +114,9 @@ function autoFetchUser() {
 // =========================
 // UI HANDLING FUNCTIONS
 // =========================
-function clearCard() {
+function clearCard(message) {
     content.classList.add("id-card-default");
-    content.innerHTML = `"HI"`;
+    content.innerHTML = `<h2 onclick="autoFetchUser()">${message}</h2>`  
     disableScanner(false);
 }
 
@@ -140,6 +139,7 @@ function showLoader() {
 
 function hideLoader() {
     content.classList.remove("id-card-loader");
+    content.classList.add("id-card");
     content.innerHTML = `
             <h5 id="school" class="text-center">Phinma University of Iloilo</h5>
             <div class="content">

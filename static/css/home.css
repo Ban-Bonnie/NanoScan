@@ -35,6 +35,64 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease,background-color 1s ease;
     
 }
+.id-card-default {
+    width: 100%;
+    max-width: 550px;
+    min-height: 320px;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* Blue gradient */
+    background: linear-gradient(45deg, #3a7bd5, #00d2ff, #0084ff, #6dd5fa);
+    background-size: 400% 400%;
+
+    /* Wavy infinite animation */
+    animation: gradientWavy 10s ease-in-out infinite;
+}
+
+@keyframes gradientWavy {
+    0% {
+        background-position: 0% 50%;
+        background-size: 400% 400%;
+    }
+    25% {
+        background-position: 50% 30%;
+        background-size: 420% 420%;
+    }
+    50% {
+        background-position: 100% 70%;
+        background-size: 400% 400%;
+    }
+    75% {
+        background-position: 50% 50%;
+        background-size: 380% 380%;
+    }
+    100% {
+        background-position: 0% 50%;
+        background-size: 400% 400%;
+    }
+}
+
+
+.id-card-default h2 {
+    font-size: 28px;
+    color: #fdfdfd; 
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); 
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.id-card-default:hover h2 {
+    transform: scale(1.05);
+}
 
 
 
@@ -52,11 +110,12 @@ body {
     justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease,background-color 1s ease;
 }
-.id-card-default{
+.id-card-hidden{
     opacity: 0;
     transform: scale(0.9); /* Shrinks slightly while fading */
     transition: opacity 0.4s ease, transform 0.4s ease;
     pointer-events: none; /* Prevents clicks */
+    display: none;
 }
 
 
@@ -105,7 +164,7 @@ body {
 }
 
 .buttons-and-navigation {
-    /* background: linear-gradient(to bottom right, #040a24 70%, #0e1a4b 100%); */ /* Darker complementing gradient */
+
     background-color: #040a2464;
     width: 100%;
     max-width: 400px;
@@ -117,13 +176,14 @@ body {
     padding: 20px;
     border-radius: 15px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 1s ease, box-shadow 0.3s ease;
 }
 
 /* Hover Effect */
 .buttons-and-navigation:hover {
     transform: scale(1.02);
     box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.5);
+    transition: all 1s ease, box-shadow 0.3s ease;
 }
 
 

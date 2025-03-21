@@ -19,23 +19,14 @@
 
     <!-- Id Card -->
     <div id="card-wrapper" class="container-wrapper">    
-        <div id="card-content" class="id-card">
-            <h5 id="school" class="text-center">Phinma University of Iloilo</h5>
-            <div  class="content">
-                <img id="student-image" src="{{url_for('static', filename='img/default-avatar.jpg')}}" alt="profile pic"  class="picture-box">
-                <div id="student-id-card" class="info">
-                    <p id="name" class="fw-bold fs-5"></p>
-                    <p id="id-no" class="fw-semibold fs-6"></p>
-                    <p id="program" class="fs-6"></p>
-                    <p id="section" class="fs-6"></p>
-                </div>
-            </div>
+        <div id="card-content" class="id-card-default">
+            <h2 onclick="autoFetchUser()">Click to Start!</h2>
         </div>
         <!-- Buttons -->
-        <div id="buttons-container" class="buttons-and-navigation rounded-3">
+        <div id="buttons-container" class="buttons-and-navigation">
             <button onclick="autoFetchUser()" id="scan-now-btn">Scan Now</button>
             <button id="openScheduleModalBtn">Schedule</button>
-            <button onclick="clearCard()" id="clear-btn">Clear</button>
+            <button onclick="clearCard(`Click to Start!`)" id="clear-btn">Clear</button>
         </div>
     </div>
     
