@@ -26,10 +26,6 @@ body {
     width: 100%;
 }
 
-
-
-
-
 .content {
     display: flex;
     align-items: center;
@@ -37,26 +33,89 @@ body {
     padding: 10px;
 }
 
-/* Profile Picture */
-.picture-box {
-    width: 150px;
-    height: 150px;
-    background-color: #291b50;
-    color: white;
+/* Card Content */
+.id-card-default {
+    width: 100%;
+    max-width: 550px;
+    min-height: 320px;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 5px;
+
+    /* Initial gradient */
+    background: linear-gradient(45deg, #c26eca, #ff9a8b, #ff3cac, #8ec5fc);
+    background-size: 400% 400%;
+
+    /* Wavy infinite animation */
+    animation: gradientWavy 10s ease-in-out infinite;
 }
 
-/* Student Info */
-.info {
-    text-align: left;
-    flex: 1;
-    min-width: 200px;
+@keyframes gradientWavy {
+    0% {
+        background-position: 0% 50%;
+        background-size: 400% 400%;
+    }
+    25% {
+        background-position: 50% 30%;
+        background-size: 420% 420%;
+    }
+    50% {
+        background-position: 100% 70%;
+        background-size: 400% 400%;
+    }
+    75% {
+        background-position: 50% 50%;
+        background-size: 380% 380%;
+    }
+    100% {
+        background-position: 0% 50%;
+        background-size: 400% 400%;
+    }
 }
+
+
+.id-card-default h2 {
+    font-size: 28px;
+    color: #fdfdfd; 
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3); 
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin: 0;
+    transition: transform 0.3s ease-in-out;
+}
+
+.id-card-default:hover h2 {
+    transform: scale(1.05);
+}
+
+.id-card-loader{
+    background-color: #bb7ab1;
+    width: 100%;
+    max-width: 550px;
+    min-height: 320px;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease,background-color 1s ease;
+}
+.id-card-hidden{
+    opacity: 0;
+    transform: scale(0.9); /* Shrinks slightly while fading */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none; /* Prevents clicks */
+    display: none;
+}
+
+
+
 
 /* Buttons and Navigation */
 .buttons-and-navigation {
@@ -138,6 +197,14 @@ button:hover {
 #register-student-btn:hover {
     background: linear-gradient(45deg, #1e6091, #52b8c2); 
 }
+#register-student-btn:disabled {
+    background: linear-gradient(45deg, #8a9fcf, #a6c3e0); 
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+
 
 #openStudentsModal-btn {
     background: linear-gradient(45deg, #e3a252, #f7b500);

@@ -161,3 +161,5 @@ function disableScanner(state) {
         scanNowBtn.disabled = state; 
     }
 }
+
+
