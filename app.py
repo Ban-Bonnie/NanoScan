@@ -11,7 +11,7 @@ class NanoScan:
         self.app = Flask(name)
         self.userInstance = None  
         self.userSchedule = None
-
+        self.allUsers = None
         self.adminInstance = None
         
 
@@ -202,7 +202,14 @@ class NanoScan:
             tags = [tag[0] for tag in tags]
             print("RFID is admin: " ,rfid in tags )
             return rfid in tags  
+        
+        def fetchAllStudents():
+            cursor = mysql.connection.cursor()
+            cursor.close()
 
+        
+
+        
 
     def run(self):
         self.app.run(debug=True, use_reloader=False)  

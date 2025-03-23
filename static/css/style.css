@@ -186,6 +186,73 @@ button:hover {
     font-size: 2rem;
 }
 
+/* Keep the background dark */
+.modal-content {
+    background: #1e1e1e;
+    color: #e0e0e0;
+    border-radius: 12px;
+}
+
+/* Darker table with subtle contrast */
+.table {
+    background-color: #2a2a2a; 
+    color: #e0e0e0;
+    border-radius: 8px;
+}
+
+/* Table header styling */
+.table thead {
+    background-color: #3a3a3a; 
+    color: #ffffff;
+}
+
+/* Table row styling */
+.table tbody tr {
+    background-color: #252525;
+    transition: background 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #333; /* Slight hover effect */
+}
+
+/* Search and Filter Inputs */
+#searchInput, #filterSelect {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border: 1px solid #444;
+}
+
+#searchInput::placeholder {
+    color: #aaa;
+}
+
+/* Buttons (Edit/Delete) */
+.edit-btn, .delete-btn {
+    background: none;
+    border: none;
+    color: #ffcc00; /* Yellow for edit */
+    font-size: 18px;
+    transition: color 0.3s ease;
+}
+
+.edit-btn:hover {
+    color: #ffd700; /* Brighter yellow */
+}
+
+.delete-btn {
+    color: #ff4444; /* Red for delete */
+}
+
+.delete-btn:hover {
+    color: #ff2222; /* Brighter red */
+}
+
+/* Bootstrap Close Button */
+.btn-close-white {
+    filter: invert(1);
+}
+
 
 
 

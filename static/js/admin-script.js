@@ -2,14 +2,14 @@ let content = document.getElementById("card-content");
 let flash = document.getElementById("flash");
 let scanNowBtn = document.getElementById(`register-student-btn`);
 
-
+/* Scanner */
 function fetchrfid() {
     disableScanner(true);
-    showLoader();  // Display loading indicator
+    showLoader();  
     fetch('/register-rfid')
     .then(response => {
         if (!response.ok) {
-          // Handle non-OK responses by throwing an error with a message from the response
+         
           return response.json().then(errData => {
             throw new Error(errData.error || 'Unknown error occurred');
           });
@@ -20,25 +20,25 @@ function fetchrfid() {
         console.log(data);
         let rfid = data.rfid;
         if (rfid) {
-          document.getElementById("tag_no").value = rfid; // Set RFID in the hidden field
+          document.getElementById("tag_no").value = rfid; 
           let modal = new bootstrap.Modal(document.getElementById('register-rfid'));
           
-          // Ensure content is initialized properly if you're updating it
-          let content = document.getElementById('content'); // Assuming content is an element you want to update
+          
+          let content = document.getElementById('content'); 
           if (content) {
-            content.innerHTML = '';  // Clear content if necessary
+            content.innerHTML = '';  
           }
           
-          closeLoader();  // Hide the loader
-          modal.show();   // Show the modal with RFID data
+          closeLoader();  
+          modal.show();   
         }
     })
     .catch(error => {
-        console.error('Error:', error.message);  // Log error details
-        closeLoader();  // Ensure loader is hidden
-        let flash = document.getElementById('flash');  // Assuming 'flash' is where you display errors
+        console.error('Error:', error.message);  
+        closeLoader();  
+        let flash = document.getElementById('flash');  
         if (flash) {
-          flash.innerHTML = `${error.message}`; // Display error message to user
+          flash.innerHTML = `${error.message}`; 
         }
     })
     .finally(() => {
@@ -47,8 +47,33 @@ function fetchrfid() {
 
     });
 }
-  
 
+/* Student Filters Functionality */ 
+document.addEventListener("DOMContentLoaded", function () {
+    const searchInput = document.getElementById("searchStudent");
+    const filterSelect = document.getElementById("filterProgram");
+    const tableBody = document.getElementById("studentsTable");
+
+    function filterTable() {
+        const searchText = searchInput.value.toLowerCase();
+        const selectedProgram = filterSelect.value;
+        
+        Array.from(tableBody.getElementsByTagName("tr")).forEach(row => {
+            const name = row.cells[1].textContent.toLowerCase();
+            const program = row.cells[5].textContent;
+
+            const matchesSearch = name.includes(searchText);
+            const matchesFilter = selectedProgram === "" || program === selectedProgram;
+
+            row.style.display = matchesSearch && matchesFilter ? "" : "none";
+        });
+    }
+
+    searchInput.addEventListener("input", filterTable);
+    filterSelect.addEventListener("change", filterTable);
+});
+
+/* Loaders */
 function showLoader(){
     content.classList.add("id-card-loader");
     content.classList.remove("id-card-default");
