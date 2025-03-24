@@ -24,59 +24,59 @@ function autoFetchUser() {
     }
 
     fetch('/fetch-user')
-    .then(response => {
-        if (!response.ok) {
-            hideLoader();
-            disableScanner(false);
-            if (response.status === 404) {
-                console.log("User is not registered");
-                clearCard("USER NOT REGISTERED");
-                return null;
+        .then(response => {
+            if (!response.ok) {
+                hideLoader();
+                disableScanner(false);
+                if (response.status === 404) {
+                    console.log("User is not registered");
+                    clearCard("USER NOT REGISTERED");
+                    return null;
+                }
+                if (response.status === 400) {
+                    console.log("No RFID Scanner Timeout");
+                    clearCard("No RFID Detected");
+                    return null;
+                }
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            if (response.status === 400) {
-                console.log("No RFID Scanner Timeout");
-                clearCard("No RFID Detected");
-                return null;
+            return response.json();
+        })
+        .then(data => {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+                return;
             }
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.redirect) {
-            window.location.href = data.redirect;
-            return;
-        }
 
-        if (!data) return;
+            if (!data) return;
 
-        console.log("✅ Data received:", data);
+            console.log("✅ Data received:", data);
 
-        if (data.error) {
-            clearCard(`${data.error}`);
-            schedule_element.innerHTML = "";
-            return;
-        }
+            if (data.error) {
+                clearCard(`${data.error}`);
+                schedule_element.innerHTML = "";
+                return;
+            }
 
-        let user = data.user;
-        let userSchedule = data.userSchedule;
+            let user = data.user;
+            let userSchedule = data.userSchedule;
 
-        if (user) {
-            hideLoader();
-            let student_details = document.getElementById("student-id-card");
-            let student_image = document.getElementById("student-image");
-            document.getElementById(`section-label`).textContent=`${user.section} `;
-            student_details.innerHTML = `
+            if (user) {
+                hideLoader();
+                let student_details = document.getElementById("student-id-card");
+                let student_image = document.getElementById("student-image");
+                document.getElementById(`section-label`).textContent = `${user.section} `;
+                student_details.innerHTML = `
                 <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
                 <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
                 <p id="program" class="fs-6">${user.program}</p>
                 <p id="section" class="fs-6">${user.section}</p>
             `;
-            student_image.src = user.profile_pic ? user.profile_pic : 'static/img/default-avatar.jpg';
-        }
+                student_image.src = user.profile_pic ? user.profile_pic : 'static/img/default-avatar.jpg';
+            }
 
-        if (Array.isArray(userSchedule) && userSchedule.length > 0) {
-            let scheduleHTML = `
+            if (Array.isArray(userSchedule) && userSchedule.length > 0) {
+                let scheduleHTML = `
                 <table>
                     <tr>
                         <th>Subject</th>
@@ -86,8 +86,8 @@ function autoFetchUser() {
                         <th>Room</th>
                     </tr>`;
 
-            userSchedule.forEach(schedule => {
-                scheduleHTML += `
+                userSchedule.forEach(schedule => {
+                    scheduleHTML += `
                     <tr>
                         <td>${schedule.subject_name}</td>
                         <td>${schedule.day_of_week}</td>
@@ -95,20 +95,40 @@ function autoFetchUser() {
                         <td>${schedule.subject_teacher}</td>
                         <td>${schedule.room}</td>
                     </tr>`;
-            });
+                });
 
-            scheduleHTML += `</table>`;
-            schedule_element.innerHTML = scheduleHTML;
-        } else {
-            schedule_element.innerHTML = "<p style='color: red;'>No schedule found.</p>";
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    })
-    .finally(() => {
-        disableScanner(false);
-    });
+                scheduleHTML += `</table>`;
+                schedule_element.innerHTML = scheduleHTML;
+            } else {
+                schedule_element.innerHTML = "<p style='color: red;'>No schedule found.</p>";
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            disableScanner(false);
+        });
+
+    // =========================
+    // Fetch and Play Audio
+    // =========================
+    fetch('/fetch-user')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.blob(); // Get audio as a binary blob
+        })
+        .then(audioBlob => {
+            const audioURL = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioURL);
+            audio.play(); // Play the generated greeting
+            console.log("✅ Audio played successfully");
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 
 // =========================
@@ -116,7 +136,7 @@ function autoFetchUser() {
 // =========================
 function clearCard(message) {
     content.classList.add("id-card-default");
-    content.innerHTML = `<h2 onclick="autoFetchUser()">${message}</h2>`  
+    content.innerHTML = `<h2 onclick="autoFetchUser()">${message}</h2>`
     disableScanner(false);
 }
 
@@ -134,7 +154,7 @@ function showLoader() {
             </div>
         </div>
         `;
-    content.classList.add("id-card-loader"); 
+    content.classList.add("id-card-loader");
 }
 
 function hideLoader() {
@@ -150,7 +170,7 @@ function hideLoader() {
                     <p id="program" class="fs-6"></p>
                     <p id="section" class="fs-6"></p>
                 </div>
-            </div>`;   
+            </div>`;
 }
 
 // =========================
@@ -158,7 +178,7 @@ function hideLoader() {
 // =========================
 function disableScanner(state) {
     if (scanNowBtn) {
-        scanNowBtn.disabled = state; 
+        scanNowBtn.disabled = state;
     }
 }
 
