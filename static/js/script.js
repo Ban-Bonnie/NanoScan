@@ -69,8 +69,8 @@ function autoFetchUser() {
                 student_details.innerHTML = `
                 <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
                 <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
-                <p id="program" class="fs-6">${user.program}</p>
-                <p id="section" class="fs-6">${user.section}</p>
+                <p id="program" class="fw-semibold fs-6">${user.program}</p>
+                <p id="section" class="fw-semibold fs-6">${user.section}</p>
             `;
                 student_image.src = user.profile_pic ? user.profile_pic : 'static/img/default-avatar.jpg';
             }
@@ -161,14 +161,17 @@ function hideLoader() {
     content.classList.remove("id-card-loader");
     content.classList.add("id-card");
     content.innerHTML = `
-            <h5 id="school" class="text-center">Phinma University of Iloilo</h5>
+            <div class="card-header">
+                <img src="static/img/UI-Logo.png">
+                <h5 id="school" class="text-center">Phinma University of Iloilo</h5>
+            </div>
             <div class="content">
                 <img id="student-image" alt="profile pic" class="picture-box">
                 <div id="student-id-card" class="info">
                     <p id="name" class="fw-bold fs-5"></p>
                     <p id="id-no" class="fw-semibold fs-6"></p>
-                    <p id="program" class="fs-6"></p>
-                    <p id="section" class="fs-6"></p>
+                    <p id="program" class="fw-bold fs-5 "></p>
+                    <p id="section" class="fw-bold fs-5 "></p>
                 </div>
             </div>`;
 }

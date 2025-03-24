@@ -10,18 +10,36 @@ body {
 
 .container-wrapper {
     display: flex;
-    flex-direction: row; /* Align items in a row */
+    flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 30px; /* Add space between the ID card and navigation */
+    gap: 30px; 
     padding: 20px;
     max-width: 1200px;
     width: 100%;
 }
+.img-fluid {
+    filter: brightness(0) invert(1);
+}
 
 /* ID Card */
+.card-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    gap: 20px; 
+    flex-wrap: wrap; 
+    padding: 20px;
+}
+
+
+.card-header img{
+    height: 60px;
+    width: 60px;
+}
+
 .id-card {
-    background-color: #f5ffcf;
+    position: relative; /* Needed for absolute positioning of ::before */
     width: 100%;
     max-width: 550px;
     min-height: 320px;
@@ -32,9 +50,27 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease,background-color 1s ease;
-    
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden; /* Prevents blur overflow */
 }
+
+.id-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/UI-FACADE.jpg');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(7px); /* Apply blur effect */
+    z-index: -1; /* Keeps the blur behind the content */
+}
+
+
+
 .id-card-default {
     width: 100%;
     max-width: 550px;
@@ -55,6 +91,8 @@ body {
     /* Wavy infinite animation */
     animation: gradientWavy 10s ease-in-out infinite;
 }
+
+
 
 @keyframes gradientWavy {
     0% {
@@ -123,15 +161,9 @@ body {
 
 
 
-.img-fluid {
-    filter: brightness(0) invert(1);
-}
 
-/* Hover Effect */
-.id-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.3);
-}
+
+
 
 
 
@@ -145,8 +177,8 @@ body {
 
 /* Profile Picture */
 .picture-box {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     background-color: #000c5d;
     color: white;
     display: flex;
