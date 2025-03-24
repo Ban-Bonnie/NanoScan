@@ -2,7 +2,11 @@ from flask import Flask, jsonify, render_template, request,redirect,url_for
 from flask_mysqldb import MySQL
 from RFIDreader import Reader
 from datetime import datetime, timedelta
+from ai import AI_Greeter
 import time
+from flask import send_file
+import io
+
 
 mysql = MySQL()
 
@@ -74,18 +78,21 @@ class NanoScan:
                     cursor.close()
                     return jsonify({'error': 'User not found'}), 404
                 
-                
-
                 user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no", "program", "profile_pic"]
                 user_dict = dict(zip(user_keys, user))
+                
                 # Get user schedule
-                cursor.execute("SELECT * FROM section_schedule WHERE section = %s", (user_dict["section"],))
+                cursor.execute("""
+                    SELECT subject_name, day_of_week, start_time, end_time, subject_teacher, room
+                    FROM section_schedule
+                    WHERE section = %s
+                """, (user_dict["section"],))
                 schedule_data = cursor.fetchall()
 
                 column_names = [desc[0] for desc in cursor.description]
                 user_schedule = []
 
-                #Convert timedelta to string
+                # Convert timedelta to string
                 for row in schedule_data:
                     row_dict = dict(zip(column_names, row))
                     
@@ -96,27 +103,61 @@ class NanoScan:
 
                     user_schedule.append(row_dict)
 
-                #Dictionary for AI
-                dic_for_ai = {
+                # Store AI dictionary
+                self.userDict = {
                     'first_name': user_dict['first_name'],
                     'last_name': user_dict['last_name'],
                     'section': user_dict['section'],
                     'program': user_dict['program'],
+                    'schedule': user_schedule,
                     'current_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
-                print(dic_for_ai)
-                self.userDict = dic_for_ai
+
                 cursor.close()
 
-                return jsonify({
-                    'user': user_dict,
-                    'userSchedule': user_schedule
-                })
+                return jsonify({'user': user_dict, 'userSchedule': user_schedule})
 
             except Exception as e:
                 import traceback
                 traceback.print_exc() 
                 return jsonify({'error': f'Internal Server Error: {str(e)}'}), 500
+
+
+        @self.app.route("/fetch-user/audio")
+        def fetch_user_audio():
+            try:
+                # Retrieve stored userDict
+                dic_for_ai = self.userDict  
+
+                if not dic_for_ai:
+                    return jsonify({'error': 'No user data available for audio'}), 400
+
+                # Generate formatted schedule text for speech
+                schedule_text = "\n".join(
+                    f"{s['subject_name']} on {s['day_of_week']} from {s['start_time']} to {s['end_time']} in room {s['room']}, taught by {s['subject_teacher']}"
+                    for s in dic_for_ai['schedule']
+                ) if dic_for_ai['schedule'] else "No schedule found."
+
+                # Create the greeting text
+                tts_text = f"""
+                Student Name: {dic_for_ai['first_name']} {dic_for_ai['last_name']}
+                Program: {dic_for_ai['program']}
+                Section: {dic_for_ai['section']}
+                Schedule: {schedule_text}
+                Current Time and Date: {dic_for_ai['current_time']}
+                """
+                
+                greeter = AI_Greeter()
+                audio_bytes = greeter.generate_audio(tts_text, audio_format="wav")
+                print(tts_text)
+                return audio_bytes, 200, {'Content-Type': 'audio/wav'}
+                
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                return jsonify({'error': f'Internal Server Error: {str(e)}'}), 500
+
+
 
         @self.app.route("/register-rfid")
         def register_rfid():

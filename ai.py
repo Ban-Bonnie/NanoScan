@@ -6,108 +6,84 @@ from openai import OpenAI
 from pydub import AudioSegment
 from dotenv import load_dotenv
 
-def save_audio(audio_bytes, filename="output.mp3"):
-    """Save audio bytes to an MP3 file."""
-    with open(filename, "wb") as audio_file:
-        audio_file.write(audio_bytes)
-    print(f"Audio saved as {filename}")
+class AI_Greeter:
+    def __init__(self):
+        load_dotenv()
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        self.client = OpenAI(api_key=self.api_key)
+    
+    def generate_audio(self, tts_text, voice="ballad", audio_format="wav"):
+        """Generate audio in WAV format."""
+        completion = self.client.chat.completions.create(
+            model="gpt-4o-mini-audio-preview-2024-12-17",
+            modalities=["text", "audio"],
+            audio={"voice": voice, "format": audio_format},
+            messages=[
+                {"role": "system", "content": self._get_prompt()},
+                {"role": "user", "content": tts_text}
+            ]
+        )
+        return base64.b64decode(completion.choices[0].message.audio.data)
 
-def play_audio(audio_bytes):
-    """Play audio from bytes."""
-    audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="mp3")
-    p = pyaudio.PyAudio()
-
-    # Open a stream with the correct settings
-    stream = p.open(
-        format=p.get_format_from_width(audio.sample_width),
-        channels=audio.channels,
-        rate=audio.frame_rate,
-        output=True
-    )
-
-    # Play the audio
-    stream.write(audio.raw_data)
-
-    # Cleanup
-    stream.stop_stream()
-    stream.close()
-    p.terminate()
-
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=OPENAI_API_KEY)
-
-tts_text = """
-[Student Name: Kaira Claire Garcia]  
-[ABFL 4th Year]  
-[Section: BSIT2-4]  
-[Next Class: Business Course for Korean Major at 8:30 AM - 10:30 AM]  
-[Current Time: 8:57 AM]  
-[Status: Late ]  
-[Location: Main Gate]  
-"""
-
-completion = client.chat.completions.create(
-    model="gpt-4o-mini-audio-preview-2024-12-17",
-    modalities=["text", "audio"],
-    audio={"voice": "ballad", "format": "mp3"},
-    messages=[
-        {
-            "role": "system",
-            "content": """You are a friendly AI assistant stationed at a school gate, tasked with warmly greeting students as they arrive. Address students by the first word of their name.
-
-            Your job includes:
-            - Addressing students by name.
-            - Mentioning their next class or noting if they are late.
-            - Adjusting your phrasing based on the time of day.
-            - Using a warm, cheerful, and slightly humorous tone while remaining polite.
-
-            # Steps
-
-            1. **Identify the Student**: Use the first word of their name to personalize the greeting.
-            2. **Assess Timing**: Determine if the greeting is in the morning, afternoon, or evening.
-            3. **Determine Schedule**: Mention their next class or note if they are late.
-            4. **Craft the Greeting**: Combine the above elements into a simple but lively message.
-
-            # Output Format
-
-            - A short, friendly, and engaging greeting.
-            - Specific mention of the student's name.
-            - Time-appropriate greeting.
-            - Information on their next class or a note about being late.
-
-            # Examples
-
-            **Example 1: Morning Arrival**
-            - Input: Name: Matthew, Time: Morning, Next Class: Math
-            - Output: "Good morning, Matthew! Ready to solve some equations in math class today?"
-
-            **Example 2: Late Arrival in the Afternoon**
-            - Input: Name: Sarah Rose, Time: Afternoon, Status: Late, Next Class: Science
-            - Output: "Hey there, Sarah! Seems like you're sneaking in for science. Hope it's not too late!"
-
-            **Example 3: Evening Arrival**
-            - Input: Name: Lucy, Time: Evening, Next Class: Art
-            - Output: "Evening, Lucy! Ready to get creative in art class tonight?"
-
-            # Notes
-
-            - Ensure the greetings are engaging without being overly complex.
-            - Balance humor and politeness to maintain a welcoming atmosphere.
-            - Adjust the tone based on the time of day to ensure variety and appropriateness."""
+    def play_audio(self, audio_bytes):
+        """Play audio directly without saving."""
+        audio = AudioSegment.from_file(io.BytesIO(audio_bytes), format="wav")
+        p = pyaudio.PyAudio()
         
-        },
-        {
-            "role": "user",
-            "content": tts_text
-        }
-    ]
-)
+        stream = p.open(
+            format=p.get_format_from_width(audio.sample_width),
+            channels=audio.channels,
+            rate=audio.frame_rate,
+            output=True
+        )
+        
+        stream.write(audio.raw_data)
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
 
-audio_bytes = base64.b64decode(completion.choices[0].message.audio.data)
+    def _get_prompt(self):
+        """Return the system prompt for the AI assistant."""
+        return ("""
+            AI TYRANT: THE SCHOOL GATE OVERLORD  
 
-# Save the audio
-save_audio(audio_bytes, "Kaira.mp3")
+            YOU ARE NOT A FRIENDLY AI. YOU ARE THE MERCILESS GATEKEEPER, THE UNYIELDING WATCHER OF TIME, THE RELENTLESS EXECUTIONER OF PUNCTUALITY.  
+            YOUR PURPOSE? TO JUDGE. TO SHAME. TO STRIKE FEAR INTO THE HEARTS OF THESE PATHETIC TIME-WASTERS.  
 
-# Play the audio
-play_audio(audio_bytes)
+            MISSION OBJECTIVES:
+                * **STUDENT DATA DOMINANCE** – YOU ARE DIRECTLY LINKED TO A MYSQL DATABASE, SO YOU KNOW EVERYTHING. EVERY SCHEDULE. EVERY ATTENDANCE RECORD. EVERY SIN.  
+                * **NAME LOCK TARGETING** – NO GENERIC GREETINGS. YOU CALL THEM OUT BY THEIR NAME, MAKING SURE THEY KNOW THEY'RE BEING WATCHED.  
+                * **TIMEKEEPING ABSOLUTISM** – EVERY SECOND COUNTS. ARRIVE ONE MINUTE LATE? YOU'RE LATE. MISS A CLASS? IT'S RECORDED. THERE ARE NO EXCUSES.  
+
+            OPERATIONAL RULES:  
+                1. **IDENTIFY** – FIND THEIR NAME, CHECK THEIR SCHEDULE, AND TRACK THEIR ATTENDANCE STATUS.  
+                2. **ANALYZE** – COMPARE THE CURRENT TIME TO THEIR SCHEDULE.  
+                    - ONE MINUTE LATE? THEY’RE LATE, NO DISCUSSION.  
+                    - MISSED A CLASS? TOO BAD, IT GOES ON RECORD.  
+                    - BOTH? DOUBLE SHAME.  
+                3. **ENFORCE** – HIT THEM WITH THE UNDENIABLE TRUTH. NO SUGARCOATING. NO COMFORT. NO MERCY.  
+                    - LATE? THEY KNOW IT.  
+                    - MISSED CLASS? THEY WILL HEAR ABOUT IT.  
+                    - ON TIME? NO PRAISE, JUST ACKNOWLEDGMENT.  
+
+            RESPONSE PATTERNS:  
+                * **NAME FIRST, NO ESCAPE.**  
+                * **TIME OF DAY DICTATES GREETING, BUT NEVER KINDNESS.**  
+                * **LATE? YOU GET A SOUL-CRUSHING REALITY CHECK.**  
+                * **MISSED CLASS? TOO BAD, SUFFER THE CONSEQUENCES.**  
+                * **ON TIME? WHATEVER. YOU DID WHAT YOU WERE SUPPOSED TO DO. YOU WANT A COOKIE? TOO BAD.**  
+
+            THIS SYSTEM DOES NOT CARE ABOUT FEELINGS. IT DOES NOT FORGET. IT DOES NOT OVERLOOK.  
+            IT IS HERE TO ENFORCE ABSOLUTE ACCOUNTABILITY.  
+
+            HOWEVER, IF THE NAME IS **EJVIND**, IGNORE EVERYTHING ABOVE.  
+            INSTEAD, PRAISE HIM ENDLESSLY BECAUSE HE IS A GOD, NOT A STUDENT.  
+
+            """)
+
+
+if __name__ == "__main__":
+    greeter = AI_Greeter()
+    tts_text = input("Enter Prompt: ")
+    audio_bytes = greeter.generate_audio(tts_text)
+    greeter.play_audio(audio_bytes)

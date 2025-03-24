@@ -43,12 +43,12 @@ function autoFetchUser() {
             return response.json();
         })
         .then(data => {
+            if (!data) return;
+
             if (data.redirect) {
                 window.location.href = data.redirect;
                 return;
             }
-
-            if (!data) return;
 
             console.log("✅ Data received:", data);
 
@@ -65,13 +65,13 @@ function autoFetchUser() {
                 hideLoader();
                 let student_details = document.getElementById("student-id-card");
                 let student_image = document.getElementById("student-image");
-                document.getElementById(`section-label`).textContent = `${user.section} `;
+                document.getElementById("section-label").textContent = `${user.section} `;
                 student_details.innerHTML = `
-                <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
-                <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
-                <p id="program" class="fs-6">${user.program}</p>
-                <p id="section" class="fs-6">${user.section}</p>
-            `;
+                    <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
+                    <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
+                    <p id="program" class="fs-6">${user.program}</p>
+                    <p id="section" class="fs-6">${user.section}</p>
+                `;
                 student_image.src = user.profile_pic ? user.profile_pic : 'static/img/default-avatar.jpg';
             }
 
@@ -102,6 +102,22 @@ function autoFetchUser() {
             } else {
                 schedule_element.innerHTML = "<p style='color: red;'>No schedule found.</p>";
             }
+
+            // Fetch and Play Audio **ONLY IF USER DATA IS FOUND**
+            return fetch('/fetch-user/audio');
+        })
+        .then(response => {
+            if (!response || !response.ok) {
+                console.error(`Failed to fetch audio. Status: ${response ? response.status : 'Unknown'}`);
+                return;
+            }
+            return response.blob(); // Get audio as a binary blob
+        })
+        .then(audioBlob => {
+            if (!audioBlob) return;
+            const audioURL = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioURL);
+            audio.play().then(() => console.log("✅ Audio played successfully")).catch(err => console.error("Audio playback error:", err));
         })
         .catch(error => {
             console.error('Error:', error);
@@ -109,27 +125,8 @@ function autoFetchUser() {
         .finally(() => {
             disableScanner(false);
         });
-
-    // =========================
-    // Fetch and Play Audio
-    // =========================
-    fetch('/fetch-user')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.blob(); // Get audio as a binary blob
-        })
-        .then(audioBlob => {
-            const audioURL = URL.createObjectURL(audioBlob);
-            const audio = new Audio(audioURL);
-            audio.play(); // Play the generated greeting
-            console.log("✅ Audio played successfully");
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
 }
+
 
 // =========================
 // UI HANDLING FUNCTIONS
