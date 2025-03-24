@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template, request,redirect,url_for
 from flask_mysqldb import MySQL
 from RFIDreader import Reader
-from datetime import timedelta
+from datetime import datetime, timedelta
 import time
 
 mysql = MySQL()
@@ -76,9 +76,8 @@ class NanoScan:
                 
                 
 
-                user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no", "program"]
+                user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no", "program", "profile_pic"]
                 user_dict = dict(zip(user_keys, user))
-
                 # Get user schedule
                 cursor.execute("SELECT * FROM section_schedule WHERE section = %s", (user_dict["section"],))
                 schedule_data = cursor.fetchall()
@@ -97,7 +96,15 @@ class NanoScan:
 
                     user_schedule.append(row_dict)
 
-
+                #Dictionary for AI
+                dic_for_ai = {
+                    'first_name': user_dict['first_name'],
+                    'last_name': user_dict['last_name'],
+                    'section': user_dict['section'],
+                    'program': user_dict['program'],
+                    'current_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
+                }
+                self.userDict = dic_for_ai
                 cursor.close()
 
                 return jsonify({
@@ -268,6 +275,7 @@ class NanoScan:
             cursor.close()
             return self.allUsers
 
+        
 
 
         

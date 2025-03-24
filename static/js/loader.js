@@ -17,5 +17,5 @@ window.onload = function () {
                 content.style.opacity = "1";
             }, 100);
         }
-    }, 1500);
+    }, 1000);
 };
