@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="loader.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="loader-container">
+        <div class="loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    
+    <div id="content" style="display: none;">
+        <h1>Welcome to My Website</h1>
+        <p>This is the main content of the page.</p>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                document.getElementById("loader-container").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            }, 1500); // Adjust time if needed
+        });
+
+    </script>
+
+</body>
+</html>

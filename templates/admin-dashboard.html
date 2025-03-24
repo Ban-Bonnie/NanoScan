@@ -6,30 +6,221 @@
     <title>NanoScan</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/admin-loader.css')}}">
+
     
 
 </head>
 <body>
-     <!-- Title Bar -->
-     <div class="title-bar">
+    <!-- Loader Container -->
+    <div id="loader-container">
+        <div class="unique-loader">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <!-- Title Bar -->
+    <div class="title-bar">
         <img src="{{url_for('static', filename='img/logo.png')}}" alt="Nano Scan Logo" class="img-fluid">
         <h1 class="text-gradient">Nano Scan <span class="admin-gradient">ADMIN</span></h1>
     </div>    
 
     <!-- Id Card -->
     <div class="container-wrapper">    
-        <div id="loader" class="free-container">
-            <p id="flash"></p>
+        <div id="card-content" class="id-card-default">
+            <h2 onclick="fetchrfid()" >Hello Admin!</h2>
         </div>
         <!-- Buttons -->
         <div class="buttons-and-navigation rounded-3">
             <button onclick="fetchrfid()" id="register-student-btn">Register Student</button>
-            <button id="openStudentsModal-btn">Students</button>
+            <button id="openStudentsModal-btn" data-bs-toggle="modal" data-bs-target="#studentsModal">Students</button>
             <form method="post" action="/admin-logout">
                 <button id="logout-btn">Log Out</button>
             </form>
         </div>
     </div>
+
+
+
+    <!-- Students Modal -->
+    <div class="modal fade" id="studentsModal" tabindex="-1" aria-labelledby="studentsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl"> <!-- Changed to modal-xl for more space -->
+            <div class="modal-content p-3"> <!-- Added padding for better spacing -->
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentsModalLabel">Students List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <!-- Search and Filter -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <input type="text" id="searchStudent" class="form-control form-control-lg" placeholder="🔍 Search student...">
+                        </div>
+                        <div class="col-md-4">
+                            <select id="filterProgram" class="form-select form-select-lg">
+                                <option value="">📚 All Programs</option>
+                                <option value="BS Information Technology">BS Information Technology</option>
+                                <option value="BS Computer Science">BS Computer Science</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Students Table -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover text-center">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th style="width: 10%;">Student ID</th>
+                                    <th style="width: 18%;">Name</th>
+                                    <th style="width: 12%;">Phone</th>
+                                    <th style="width: 12%;">Parent Phone</th>
+                                    <th style="width: 12%;">Tag No.</th>
+                                    <th style="width: 15%;">Program</th>
+                                    <th style="width: 10%;">Section</th>
+                                    <th style="width: 11%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentsTable">
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{student[7]}}</td>
+                                    <td>{{student[2] }}, {{student[1]}}</td>
+                                    <td>{{student[4]}}</td>
+                                    <td>{{student[3]}}</td>
+                                    <td>{{student[5]}}</td>
+                                    <td>{{student[8]}}</td>
+                                    <td>{{student[6]}}</td>
+                                    <td>
+                                        <!-- Edit student btn -->
+                                        <a href="#" class="btn text-warning fs-5 edit-btn" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editStudentModal"
+                                            data-id="{{ student[0] }}"
+                                            data-firstname="{{ student[1] }}"
+                                            data-lastname="{{ student[2] }}"
+                                            data-phone="{{ student[4] }}"
+                                            data-parent-phone="{{ student[3] }}"
+                                            data-tag-no="{{ student[5] }}"
+                                            data-program="{{ student[8] }}"
+                                            data-section="{{ student[6] }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+
+                                        <!-- delete student btn -->
+                                        <a href="#" class="btn text-danger fs-5 delete-btn" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#deleteStudentModal"
+                                            data-id="{{ student[0] }}"
+                                            data-rfid="{{ student[5] }}"
+                                            data-name="{{ student[2] }}, {{ student[1] }}">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Edit Student Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStudentModalLabel">Edit Student Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/edit-student-details" method="POST">
+                        <!-- Hidden ID Field -->
+                        <input type="hidden" name="student-id"  id="student-id">
+                        
+                        <div class="mb-3">
+                            <label for="firstname" class="form-label">First Name</label>
+                            <input autocomplete="off" type="text" class="form-control" id="firstname" name="firstname" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="lastname" class="form-label">Last Name</label>
+                            <input autocomplete="off" type="text" class="form-control" id="lastname" name="lastname" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input autocomplete="off" type="text" class="form-control" id="phone" name="phone" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="parent-phone" class="form-label">Parent Phone</label>
+                            <input autocomplete="off" type="text" class="form-control" id="parent-phone" name="parent-phone" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tag-no" class="form-label">Tag No</label>
+                            <input autocomplete="off" type="text" class="form-control" id="tag-no" name="tag-no" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="program" class="form-label">Program</label>
+                            <select name="program" id="program" class="form-control" required>
+                                <option value="BS Information Technology">BS Information Technology</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="section" class="form-label">Section</label>
+                            <select name="section" id="section" class="form-control" required>
+                                <option value="FC1-BSIT2-4">FC1-BSIT2-4</option>
+                            </select>
+                        </div>
+                        
+                        
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Student Modal-->
+    <div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteStudentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteStudentModalLabel">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p align="center" >Are you sure you want to delete this user? <br> <strong style="color: rgb(11, 184, 14); font-size: large;" id="deleteStudentName"></strong> <br>This will delete their RFID Data aswell</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="/delete-student">
+                        <input type="hidden" name="delete-student-id" id="deleteStudentId">
+                        <input type="hidden" name="delete-tag-no" id="deleteRFID">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     
     <!-- Register RFID Modal -->
     <div class="modal fade" id="register-rfid" tabindex="-1" aria-labelledby="register-rfid-label" aria-hidden="true">
@@ -88,6 +279,47 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="{{url_for('static',filename='js/admin-script.js')}}"></script>
+    <!-- JS for local Buttons -->
+    <script>
+        /* For edit Modal */
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".edit-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    document.getElementById("student-id").value = this.dataset.id;
+                    document.getElementById("firstname").value = this.dataset.firstname;
+                    document.getElementById("lastname").value = this.dataset.lastname;
+                    document.getElementById("phone").value = this.dataset.phone;
+                    document.getElementById("parent-phone").value = this.dataset.parentPhone;
+                    document.getElementById("tag-no").value = this.dataset.tagNo;
+                    document.getElementById("program").value = this.dataset.program;
+                    document.getElementById("section").value = this.dataset.section;
+                });
+            });
+        });
+        /* Close Button for Edit student */
+        document.addEventListener("DOMContentLoaded", function () {
+            const editStudentModal = document.getElementById("editStudentModal");
+            const studentsModal = new bootstrap.Modal(document.getElementById("studentsModal"));
+
+            editStudentModal.addEventListener("hidden.bs.modal", function () {
+                studentsModal.show();
+            });
+        });
+        /* Delete Student Modal */
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".delete-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    document.getElementById("deleteStudentName").textContent = this.dataset.name;
+                    document.getElementById("deleteStudentId").value = this.dataset.id;
+                    document.getElementById("deleteRFID").value = this.dataset.rfid;
+                });
+            });
+        });
+        
+
+    </script>
+    <!-- Loader script -->
+    <script src="{{url_for('static',filename='js/loader.js')}}"></script>
 </body>
 
 </html>

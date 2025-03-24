@@ -11,7 +11,7 @@ class NanoScan:
         self.app = Flask(name)
         self.userInstance = None  
         self.userSchedule = None
-
+        self.allUsers = None
         self.adminInstance = None
         
 
@@ -32,7 +32,8 @@ class NanoScan:
 
         @self.app.route("/admin")
         def admin():
-            return render_template("admin-dashboard.html", adminProfile = self.adminInstance)
+            students = fetchAllStudents()
+            return render_template("admin-dashboard.html", adminProfile = self.adminInstance, students = self.allUsers)
 
 
 
@@ -167,7 +168,6 @@ class NanoScan:
                         "INSERT INTO rfid (tag_no, registered, admin) VALUES (%s, %s, %s)", 
                         (tag_no, 1,0)
                     )
-
                     mysql.connection.commit()
                     
                 except Exception as e:
@@ -187,6 +187,62 @@ class NanoScan:
             self.userSchedule = None
             return redirect(url_for('home'))
         
+        @self.app.route('/delete-student', methods = ['POST', 'GET'])
+        def delete_student():
+            if request.method == 'POST':
+                id = request.form['delete-student-id']
+                tag_no = request.form['delete-tag-no']
+                print(f"delete student with id: {id} \nTAG: {tag_no} ")
+                try:
+                    cursor = mysql.connection.cursor()
+                    cursor.execute('DELETE FROM students WHERE id = %s',(id,))
+                    
+                    cursor.execute('DELETE FROM rfid WHERE tag_no = %s',(tag_no,))
+                    mysql.connection.commit()
+                except Exception as e:
+                    print(f"An errorr occured while deleting student: {e}")
+                    mysql.connection.rollback()
+
+                finally:
+                    cursor.close()
+                    return redirect(url_for('admin'))
+            else:
+                return redirect(url_for('admin'))
+
+        @self.app.route('/edit-student-details',methods = ['POST', 'GET'])
+        def edit_student_details():
+            if request.method == 'POST':
+                id = request.form['student-id']
+                firstname = request.form['firstname']
+                lastname = request.form['lastname']
+                phone = request.form['phone']
+                parent_phone = request.form['parent-phone']
+                tag_no = request.form['tag-no']
+                program = request.form['program']
+                section = request.form['section']
+
+                cursor = mysql.connection.cursor()
+                cursor.execute("SELECT * FROM students WHERE id = %s", (id,))
+                print(cursor.fetchall())  # This will show if the student exists.
+                print(id)  # This will show if the student exists.
+
+
+                try:
+                    cursor.execute("UPDATE students SET first_name = %s,last_name = %s, student_phone = %s, parent_phone = %s, tag_no = %s, program = %s, section = %s WHERE id = %s",
+                                (firstname, lastname, phone, parent_phone, tag_no, program, section, id))
+                    mysql.connection.commit()
+
+                except Exception as e: 
+                    mysql.connection.rollback()
+                    print(f"an error occured while updating student details: {e}")
+
+                finally: 
+                    cursor.close()
+
+            return redirect(url_for('admin'))        
+
+        
+
         def rfidIsRegistered(rfid):
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT tag_no FROM rfid WHERE registered = %s", (1,))
@@ -202,7 +258,17 @@ class NanoScan:
             tags = [tag[0] for tag in tags]
             print("RFID is admin: " ,rfid in tags )
             return rfid in tags  
+        
+        def fetchAllStudents():
+            cursor = mysql.connection.cursor()
+            cursor.execute("SELECT * FROM students")
+            self.allUsers = cursor.fetchall()
+            cursor.close()
+            return self.allUsers
 
+        
+
+        
 
     def run(self):
         self.app.run(debug=True, use_reloader=False)  
