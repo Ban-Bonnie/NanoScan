@@ -102,8 +102,9 @@ class NanoScan:
                     'last_name': user_dict['last_name'],
                     'section': user_dict['section'],
                     'program': user_dict['program'],
-                    'current_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")  
+                    'current_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
+                print(dic_for_ai)
                 self.userDict = dic_for_ai
                 cursor.close()
 
