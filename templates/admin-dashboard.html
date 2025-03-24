@@ -66,7 +66,7 @@
                             <select id="filterProgram" class="form-select form-select-lg">
                                 <option value="">📚 All Programs</option>
                                 <option value="BS Information Technology">BS Information Technology</option>
-                                <option value="BS Computer Science">BS Computer Science</option>
+                                <option value="BS Civil Engineering">BS Civil Engineering</option>
                             </select>
                         </div>
                     </div>
@@ -176,6 +176,7 @@
                             <label for="program" class="form-label">Program</label>
                             <select name="program" id="program" class="form-control" required>
                                 <option value="BS Information Technology">BS Information Technology</option>
+                                <option value="BS Civil Engineering">BS Civil Engineering</option>
                             </select>
                         </div>
 
@@ -183,6 +184,7 @@
                             <label for="section" class="form-label">Section</label>
                             <select name="section" id="section" class="form-control" required>
                                 <option value="FC1-BSIT2-4">FC1-BSIT2-4</option>
+                                <option value="CE-101">CE-101</option>
                             </select>
                         </div>
                         
@@ -255,19 +257,22 @@
                         <div class="mb-3">
                             <label for="program" class="form-label">Program</label>
                             <select name="program" id="program" class="form-control" required>
+                                <option value="" disabled selected>Select Program</option>
                                 <option value="BS Information Technology">BS Information Technology</option>
+                                <option value="BS Civil Engineering">BS Civil Engineering</option>
                             </select>
-                        </div> 
+                        </div>
+                        
                         <div class="mb-3">
                             <label for="section" class="form-label">Section</label>
                             <select name="section" id="section" class="form-control" required>
-                                <option value="FC1-BSIT2-4">FC1-BSIT2-4</option>
+                                <option value="" disabled selected>Select Section</option>
                             </select>
-                        </div>                            
+                        </div>                       
                         <input type="hidden" name="tag_no" id="tag_no"> <!-- Hidden tag_no field -->
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Register Student</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Register Student</button>
                         </div>
                         
                     </form>
@@ -315,7 +320,43 @@
                 });
             });
         });
-        
+
+        /* Automatic Section Selections Based on Program Selection */
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("#program").forEach(programDropdown => {
+            programDropdown.addEventListener("change", function () {
+                let sectionDropdown = this.closest("form").querySelector("#section");
+                sectionDropdown.innerHTML = ""; // Clear existing options
+
+                // Add default "Select Section" option
+                let defaultOption = document.createElement("option");
+                defaultOption.value = "";
+                defaultOption.textContent = "Select Section";
+                defaultOption.disabled = true;
+                defaultOption.selected = true;
+                sectionDropdown.appendChild(defaultOption);
+
+                let selectedProgram = this.value;
+
+                // Define section options
+                let sections = {
+                    "BS Information Technology": ["FC1-BSIT2-4"],
+                    "BS Civil Engineering": ["CE-101"]
+                };
+
+                // Add new options
+                if (sections[selectedProgram]) {
+                    sections[selectedProgram].forEach(section => {
+                        let option = document.createElement("option");
+                        option.value = section;
+                        option.textContent = section;
+                        sectionDropdown.appendChild(option);
+                    });
+                }
+            });
+        });
+    });
+
 
     </script>
     <!-- Loader script -->

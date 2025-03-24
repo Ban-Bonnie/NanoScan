@@ -13,6 +13,8 @@ class NanoScan:
         self.userSchedule = None
         self.allUsers = None
         self.adminInstance = None
+        self.allCourses = None
+        self.userDict = None
         
 
         # Database Configuration
@@ -27,6 +29,7 @@ class NanoScan:
         #Web Routes
         @self.app.route("/")
         def home():
+            
             return render_template("index.html")
 
 
@@ -242,7 +245,6 @@ class NanoScan:
             return redirect(url_for('admin'))        
 
         
-
         def rfidIsRegistered(rfid):
             cursor = mysql.connection.cursor()
             cursor.execute("SELECT tag_no FROM rfid WHERE registered = %s", (1,))
@@ -266,7 +268,7 @@ class NanoScan:
             cursor.close()
             return self.allUsers
 
-        
+
 
         
 
