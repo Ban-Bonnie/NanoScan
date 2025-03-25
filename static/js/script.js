@@ -67,19 +67,11 @@ function autoFetchUser() {
                 let student_image = document.getElementById("student-image");
                 document.getElementById("section-label").textContent = `${user.section} `;
                 student_details.innerHTML = `
-<<<<<<< HEAD
                 <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
                 <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
                 <p id="program" class="fw-semibold fs-6">${user.program}</p>
                 <p id="section" class="fw-semibold fs-6">${user.section}</p>
             `;
-=======
-                    <p id="name" class="fw-bold fs-5">${user.first_name} ${user.last_name}</p>
-                    <p id="id-no" class="fw-semibold fs-6">ID NO. ${user.id_no}</p>
-                    <p id="program" class="fs-6">${user.program}</p>
-                    <p id="section" class="fs-6">${user.section}</p>
-                `;
->>>>>>> e338a3e703397af0084a0b9356ce202b22661d57
                 student_image.src = user.profile_pic ? user.profile_pic : 'static/img/default-avatar.jpg';
             }
 

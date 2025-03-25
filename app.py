@@ -80,11 +80,6 @@ class NanoScan:
                 
                 user_keys = ["id", "first_name", "last_name", "parent_phone", "student_phone", "tag_no","section", "id_no", "program", "profile_pic"]
                 user_dict = dict(zip(user_keys, user))
-<<<<<<< HEAD
-
-                # Get user 
-                cursor.execute("SELECT * FROM section_schedule WHERE section = %s", (user_dict["section"],))
-=======
                 
                 # Get user schedule
                 cursor.execute("""
@@ -92,7 +87,6 @@ class NanoScan:
                     FROM section_schedule
                     WHERE section = %s
                 """, (user_dict["section"],))
->>>>>>> e338a3e703397af0084a0b9356ce202b22661d57
                 schedule_data = cursor.fetchall()
 
                 column_names = [desc[0] for desc in cursor.description]
@@ -109,15 +103,9 @@ class NanoScan:
                         row_dict["end_time"] = str(row_dict["end_time"])
 
                     user_schedule.append(row_dict)
-<<<<<<< HEAD
-                
-                #Dictionary for AI
-                dic_for_ai = {
-=======
 
                 # Store AI dictionary
                 self.userDict = {
->>>>>>> e338a3e703397af0084a0b9356ce202b22661d57
                     'first_name': user_dict['first_name'],
                     'last_name': user_dict['last_name'],
                     'section': user_dict['section'],
@@ -125,20 +113,10 @@ class NanoScan:
                     'schedule': user_schedule,
                     'current_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 }
-<<<<<<< HEAD
-                self.userDict = dic_for_ai
-                cursor.close()
-
-                return jsonify({
-                    'user': user_dict,
-                    'userSchedule': user_schedule 
-                })
-=======
 
                 cursor.close()
 
                 return jsonify({'user': user_dict, 'userSchedule': user_schedule})
->>>>>>> e338a3e703397af0084a0b9356ce202b22661d57
 
             except Exception as e:
                 import traceback
@@ -348,6 +326,6 @@ class NanoScan:
     def run(self):
         self.app.run(debug=True, use_reloader=False)  
 
-nano_scan = NanoScan(__name__)  
+nano_scan = NanoScan(__name__)
 nano_scan.setup_route()
 nano_scan.run()
