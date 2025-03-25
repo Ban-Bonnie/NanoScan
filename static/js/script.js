@@ -182,4 +182,19 @@ function disableScanner(state) {
     }
 }
 
+let audio; // Global variable to track the audio instance
+
+function speak() {
+    if (audio && !audio.paused) {
+        console.log("Audio is already playing.");
+        return; // Exit if the audio is still playing
+    }
+
+    let audioSource = document.querySelector(".title-bar").getAttribute("data-audio");
+    audio = new Audio(audioSource);
+
+    audio.play().catch(error => console.error("Error playing audio:", error));
+}
+
+
 

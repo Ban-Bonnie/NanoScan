@@ -101,4 +101,12 @@ if __name__ == "__main__":
     greeter = AI_Greeter()
     tts_text = input("Enter Prompt: ")
     audio_bytes = greeter.generate_audio(tts_text)
-    greeter.play_audio(audio_bytes)
+
+    # Save the audio as a .wav file
+    with open("output.wav", "wb") as f:
+        f.write(audio_bytes)
+    
+    print("Audio saved as 'ballad.wav'")
+
+    greeter.play_audio(audio_bytes)  # Still plays the audio after saving
+

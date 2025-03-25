@@ -24,10 +24,11 @@
     
     
      <!-- Title Bar -->
-    <div class="title-bar">
-        <img src="{{url_for('static', filename='img/logo.png')}}" alt="Nano Scan Logo" class="img-fluid">
+     <div onclick="speak()" class="title-bar" data-audio="{{ url_for('static', filename='audio/output.wav') }}">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Nano Scan Logo" class="img-fluid">
         <h1 class="text-white">Nano Scan</h1>
     </div>
+    
 
     <!-- Id Card -->
     <div id="card-wrapper" class="container-wrapper">    

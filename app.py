@@ -32,10 +32,8 @@ class NanoScan:
 
         #Web Routes
         @self.app.route("/")
-        def home():
-            
+        def home():            
             return render_template("index.html")
-
 
         @self.app.route("/admin")
         def admin():
@@ -66,6 +64,8 @@ class NanoScan:
                 
                 if not rfid_tag:
                     return jsonify({'error': 'No RFID tag detected'}), 400
+
+                
 
                 print("✅ RFID scanned:", rfid_tag)
 
@@ -111,7 +111,7 @@ class NanoScan:
                     'section': user_dict['section'],
                     'program': user_dict['program'],
                     'schedule': user_schedule,
-                    'current_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    'current_time': datetime.now().strftime("%A %Y-%m-%d %H:%M:%S %p")
                 }
 
                 cursor.close()
@@ -135,9 +135,10 @@ class NanoScan:
 
                 # Generate formatted schedule text for speech
                 schedule_text = "\n".join(
-                    f"{s['subject_name']} on {s['day_of_week']} from {s['start_time']} to {s['end_time']} in room {s['room']}, taught by {s['subject_teacher']}"
-                    for s in dic_for_ai['schedule']
-                ) if dic_for_ai['schedule'] else "No schedule found."
+                        f"{s['subject_name']} on {s['day_of_week']} from {datetime.strptime(s['start_time'], '%H:%M:%S').strftime('%I:%M %p')} "
+                        f"to {datetime.strptime(s['end_time'], '%H:%M:%S').strftime('%I:%M %p')} in room {s['room']}, taught by {s['subject_teacher']}"
+                        for s in dic_for_ai['schedule']
+                    ) if dic_for_ai['schedule'] else "No schedule found."
 
                 # Create the greeting text
                 tts_text = f"""
@@ -206,20 +207,23 @@ class NanoScan:
                 tag_no = request.form["tag_no"]
                 section = request.form["section"]
                 program = request.form["program"]
+                profile = ""
                 print(program)
+                print(f"{tag_no}{student_id}")
                 try:
                     cursor = mysql.connection.cursor()
                     
                     # Add student to student table
                     cursor.execute(
-                        "INSERT INTO students (student_id, first_name, last_name, parent_phone, student_phone, tag_no, section, program) VALUES (%s, %s, %s, %s, %s, %s, %s,%s)",
-                        (student_id, firstname, lastname, parent_phone, student_phone, tag_no, section,program)
+                        "INSERT INTO students (student_id, first_name, last_name, parent_phone, student_phone, tag_no, section, program, profile) VALUES (%s, %s, %s, %s, %s, %s, %s,%s, %s)",
+                        (student_id, firstname, lastname, parent_phone, student_phone, tag_no, section,program, profile)
                     )
+
 
                     # Register RFID to RFID list
                     cursor.execute(
-                        "INSERT INTO rfid (tag_no, registered, admin) VALUES (%s, %s, %s)", 
-                        (tag_no, 1,0)
+                        "INSERT INTO rfid (tag_no, registered) VALUES (%s, %s)", 
+                        (tag_no, 1)
                     )
                     mysql.connection.commit()
                     
